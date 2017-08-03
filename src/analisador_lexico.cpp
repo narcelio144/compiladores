@@ -1,4 +1,3 @@
-int mope(){
-	return 0;	
+void mope(){
 }
 
