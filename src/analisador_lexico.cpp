@@ -1,5 +1,4 @@
-void mope(){
-	typedef enum {
+typedef enum {
 		// palavras reservadas
 		ARRAY, BOOLEAN, BREAK, CHAR, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF, INTEGER, OF, STRING, STRUCT, TRUE, TYPE, VAR, WHILE,
 		// simbolos
@@ -8,18 +7,21 @@ void mope(){
 		CHARACTER, NUMERAL, STRINGVAL, ID,
 		// token deconhecido
 		UNKNOWN 
-	} t_token;
+} t_token;
 
-	t_token searchKeyWord( char *name );
-	int searchName( char *name );
-	typedef struct{
-		byte type; // 0-char, 1-int, 2- string union
-		{
-            char
-            int
-            char *
-		} _; 
-	} t_const;
+t_token searchKeyWord( char *name );
+int searchName( char *name );
+typedef struct{
+	unsigned char type; // 0-char, 1-int, 2- string union
+	union
+	{
+        char   cVal;
+        int    nVal;
+        char * sVal;
+	} _; 
+} t_const;
 
+
+void mope(){
 }
 
