@@ -9,8 +9,7 @@ typedef enum {
 		UNKNOWN 
 } t_token;
 
-t_token searchKeyWord( char *name );
-int searchName( char *name );
+
 typedef struct{
 	unsigned char type; // 0-char, 1-int, 2- string union
 	union
@@ -21,6 +20,20 @@ typedef struct{
 	} _; 
 } t_const;
 
+const char *reserv_words[] {"ARRAY", "BOOLEAN", "BREAK", "CHAR", "CONTINUE", "DO", "ELSE", "FALSE", "FUNCTION", "IF", "INTEGER", "OF", "STRING", "STRUCT", "TRUE", "TYPE", "VAR", "WHILE"};
+
+int searchName( char *name );
+
+t_token searchKeyWord( char *name ){ //função que será usada para buscar as palavras reservadas na tabela de palavras reservadas.
+	for(int i=0;i<18;i++){
+		if(strcmp(name,reserv_words[i])){
+			printf("Eh uma palavra reservada.\n");
+			return (t_token)i;
+		}
+	}
+	printf("Nao eh uma palavra reservada. \n");
+	return ID;
+}
 
 void mope(){
 }
