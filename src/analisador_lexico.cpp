@@ -156,9 +156,12 @@ token_struct nextToken() {
         switch(nextChar) {
             case '\'':
                 readChar(nextChar);
-                s_token.token = CHARACTER;
                 s_token.constPosition = addCharConst(nextChar);
                 readChar(nextChar);
+                if (nextChar != '\'')
+                    s_token.token = UNKNOWN;
+                else
+                    s_token.token = CHARACTER;
 				readChar(nextChar);
                 break;
             case ':':
