@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-lstdc++
+CFLAGS=-lstdc++ -std=c++11 -g
 TARGET=ss_compiler
 SOURCE= src/analisador_lexico.cpp src/main.cpp
 
