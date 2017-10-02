@@ -24,21 +24,21 @@ using std::vector;
 
 //Enumeração para os tokens da linguagem
 typedef enum {
-		// Palavras reservadas 
-		ARRAY, BOOLEAN, BREAK, CHAR, CONTINUE, DO, 
+		// Palavras reservadas
+		ARRAY, BOOLEAN, BREAK, CHAR, CONTINUE, DO,
 		ELSE, FALSE, FUNCTION, IF, INTEGER, OF, RETURN,
 		STRING, STRUCT, TRUE, TYPE, VAR, WHILE,
 		// Símbolos
-		COLON, SEMI_COLON, COMMA, EQUALS, LEFT_SQUARE, 
-		RIGHT_SQUARE, LEFT_BRACES, RIGHT_BRACES, 
+		COLON, SEMI_COLON, COMMA, EQUALS, LEFT_SQUARE,
+		RIGHT_SQUARE, LEFT_BRACES, RIGHT_BRACES,
 		LEFT_PARENTHESIS, RIGHT_PARENTHESIS, AND, OR,
 		LESS_THAN, GREATER_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL,
 		NOT_EQUAL, EQUAL_EQUAL, PLUS, PLUS_PLUS,
 		MINUS, MINUS_MINUS, TIMES, DIVIDE, DOT, NOT,
 		// Token Regulares
 		CHARACTER, NUMERAL, STRINGVAL, ID,
-        //EOF
-        ENDFILE,
+    //EOF
+    ENDFILE,
 		// Token Desconhecido
 		UNKNOWN
 } t_token;
@@ -56,25 +56,28 @@ typedef struct{
         char   cVal;
         int    nVal;
         char * sVal;
-	} _; 
+	} _;
 } t_const;
 
 //Estrutura retornada pela função nextToken contendo o token e, se for o caso, o token secundário
 typedef struct{
-    t_token token; 
+    t_token token;
     int tokenSecundario;
     int constPosition;
 } token_struct;
 
-//Definição de algumas variáveis globais úteis 
+//Definição de algumas variáveis globais úteis
 extern unordered_map<string,int> tokenSecundarioIDMap;
 extern unordered_map<string,t_token> reservedWordMap;
+extern unordered_map<int,string> t_terminalNames;
 extern vector<t_const> vConst;
 extern ifstream inputFile;
+extern int currentLine;
+
 
 //Métodos para inicialização das estruturas de dados necessárias
-void intializeReservedWordMap();
-
+void initializeReservedWordMap();
+void initializeTerminalNames();
 //Métodos para tratamento de constantes
 int addCharConst(char c);
 int addIntConst(int n);
@@ -92,7 +95,9 @@ t_token searchKeyWord(string);
 int searchName(string);
 token_struct nextToken();
 
-//Método que será chamado pela função main do compilador para realizar a análise
+//Método que será chamado pela função main do compilador para realizar a somente a análise léxica
 void lexical_analysis();
+
+void getCurrentLine();
 
 #endif

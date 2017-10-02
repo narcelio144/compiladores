@@ -4,9 +4,65 @@
 unordered_map<string,t_token> reservedWordMap = unordered_map<string,t_token>();
 unordered_map<string,int> tokenSecundarioIDMap = unordered_map<string,int>();
 vector<t_const> vConst = vector<t_const>();
+unordered_map<int,string> t_terminalNames = unordered_map<int,string>();
+int currentLine = 1;
 
+//This structure is used only for debugging purposes
+void initializeTerminalNames(void){
+    t_terminalNames[ARRAY] = "ARRAY";
+    t_terminalNames[BOOLEAN] = "BOOLEAN";
+    t_terminalNames[BREAK] = "BREAK";
+    t_terminalNames[CHAR] = "CHAR";
+    t_terminalNames[CONTINUE] = "CONTINUE";
+    t_terminalNames[DO] = "DO";
+    t_terminalNames[ELSE] = "ELSE";
+		t_terminalNames[ENDFILE] = "ENDFILE";
+    t_terminalNames[FALSE] = "FALSE";
+    t_terminalNames[FUNCTION] = "FUNCTION";
+    t_terminalNames[IF] = "IF";
+    t_terminalNames[INTEGER] = "INTEGER";
+    t_terminalNames[OF] = "OF";
+    t_terminalNames[RETURN] = "RETURN";
+    t_terminalNames[STRING] = "STRING";
+    t_terminalNames[STRUCT] = "STRUCT";
+    t_terminalNames[TRUE] = "TRUE";
+    t_terminalNames[TYPE] = "TYPE";
+    t_terminalNames[VAR] = "VAR";
+    t_terminalNames[WHILE] = "WHILE";
+    t_terminalNames[COLON] = "COLON";
+    t_terminalNames[SEMI_COLON] = "SEMI_COLON";
+    t_terminalNames[COMMA] = "COMMA";
+    t_terminalNames[EQUALS] = "EQUALS";
+    t_terminalNames[LEFT_SQUARE] = "LEFT_SQUARE";
+    t_terminalNames[RIGHT_SQUARE] = "RIGHT_SQUARE";
+    t_terminalNames[LEFT_BRACES] = "LEFT_BRACES";
+    t_terminalNames[RIGHT_BRACES] = "RIGHT_BRACES";
+    t_terminalNames[LEFT_PARENTHESIS] = "LEFT_PARENTHESIS";
+    t_terminalNames[RIGHT_PARENTHESIS] = "RIGHT_PARENTHESIS";
+    t_terminalNames[AND] = "AND";
+    t_terminalNames[OR] = "OR";
+    t_terminalNames[LESS_THAN] = "LESS_THAN";
+    t_terminalNames[GREATER_THAN] = "GREATER_THAN";
+    t_terminalNames[LESS_OR_EQUAL] = "LESS_OR_EQUAL";
+    t_terminalNames[GREATER_OR_EQUAL] = "GREATER_OR_EQUAL";
+    t_terminalNames[NOT_EQUAL] = "NOT_EQUAL";
+    t_terminalNames[EQUAL_EQUAL] = "EQUAL_EQUAL";
+    t_terminalNames[PLUS] = "PLUS";
+    t_terminalNames[PLUS_PLUS] = "PLUS_PLUS";
+    t_terminalNames[MINUS] = "MINUS";
+    t_terminalNames[MINUS_MINUS] = "MINUS_MINUS";
+    t_terminalNames[TIMES] = "TIMES";
+    t_terminalNames[DIVIDE] = "DIVIDE";
+    t_terminalNames[DOT] = "DOT";
+    t_terminalNames[NOT] = "NOT";
+    t_terminalNames[CHARACTER] = "CHARACTER";
+    t_terminalNames[NUMERAL] = "NUMERAL";
+    t_terminalNames[STRINGVAL] = "STRINGVAL";
+    t_terminalNames[ID] = "ID";
+    t_terminalNames[UNKNOWN] = "UNKNOWN";
+}
 void initializeReservedWordMap(){
-		reservedWordMap["array"]=ARRAY;
+				reservedWordMap["array"]=ARRAY;
         reservedWordMap["boolean"] = BOOLEAN;
         reservedWordMap["break"] = BREAK;
         reservedWordMap["char"] = CHAR;
@@ -18,7 +74,7 @@ void initializeReservedWordMap(){
         reservedWordMap["if"] = IF;
         reservedWordMap["integer"] = INTEGER;
         reservedWordMap["of"] = OF;
-		reservedWordMap["return"] = RETURN;
+				reservedWordMap["return"] = RETURN;
         reservedWordMap["string"] = STRING;
         reservedWordMap["struct"] = STRUCT;
         reservedWordMap["true"] = TRUE;
@@ -64,9 +120,15 @@ char* getStringConst(int n){
 }
 
 char readChar(char& nextChar){
-	inputFile.get(nextChar);
-	if (inputFile.eof())
+	if (inputFile.eof()){
 		nextChar = EOF;
+		return nextChar;
+	}
+	inputFile.get(nextChar);
+	if (nextChar == '\n'){
+		currentLine++;
+	}
+
 	return nextChar;
 }
 
@@ -86,7 +148,7 @@ void scanWord(token_struct& s_token,char& nextChar){
 	}
 	s_token.token = searchKeyWord(text);
 	if ( s_token.token == ID  ) {
-		s_token.tokenSecundario = searchName(text);                            
+		s_token.tokenSecundario = searchName(text);
     }
 }
 void scanNum(token_struct& s_token,char& nextChar){
@@ -120,20 +182,16 @@ int searchName(string key){
 }
 
 token_struct nextToken() {
-	static char nextChar = '\x20'; 
+	static char nextChar = '\x20';
 	token_struct s_token = getNewTokenStruct();
 
-	if(nextChar == EOF){
-        s_token.token = ENDFILE;
-		return s_token;
-    }
     // Loop do estado inicial para pular os separadores
     while (isspace(nextChar)) {
         readChar(nextChar);
     }
 
     if (isalpha(nextChar)) {
-        scanWord(s_token,nextChar);  
+        scanWord(s_token,nextChar);
     }
 
     else if (isdigit(nextChar)) {
@@ -148,7 +206,7 @@ token_struct nextToken() {
 			readChar(nextChar);
 		}
 	    string[i] = '\0';
-	    readChar(nextChar); 
+	    readChar(nextChar);
 	    s_token.token = STRINGVAL;
 	    s_token.constPosition = addStringConst(string);
     }
@@ -173,8 +231,8 @@ token_struct nextToken() {
                 if (nextChar == '+') {
                     s_token.token =  PLUS_PLUS;
 					readChar(nextChar);
-                }                                         
-                else  
+                }
+                else
                     s_token.token =  PLUS;
                 break;
             case ';':
@@ -191,10 +249,10 @@ token_struct nextToken() {
                 if (nextChar == '=') {
                     s_token.token =  EQUAL_EQUAL;
 					readChar(nextChar);
-                } else 
-                    s_token.token =  EQUALS;                    
+                } else
+                    s_token.token =  EQUALS;
                 break;
-            case '[':   
+            case '[':
                 s_token.token =  LEFT_SQUARE;
 				readChar(nextChar);
                 break;
@@ -260,7 +318,7 @@ token_struct nextToken() {
                 if (nextChar == '-') {
                     s_token.token =  MINUS_MINUS;
 					readChar(nextChar);
-                } else 
+                } else
                     s_token.token =  MINUS;
                 break;
             case '*':
@@ -271,6 +329,9 @@ token_struct nextToken() {
                 s_token.token =  DIVIDE;
 				readChar(nextChar);
                 break;
+						case EOF:
+								s_token.token = ENDFILE;
+								break;
             case '.':
                 s_token.token =  DOT;
 				readChar(nextChar);
@@ -280,11 +341,12 @@ token_struct nextToken() {
                 if (nextChar == '=') {
                     s_token.token =  NOT_EQUAL;
 					readChar(nextChar);
-                } else 
+                } else
                     s_token.token =  NOT;
-                break;                 
+                break;
             default:
                 s_token.token =  UNKNOWN;
+								cout<<int(nextChar);
 				readChar(nextChar);
                 break;
         }
@@ -293,10 +355,12 @@ token_struct nextToken() {
 }
 
 void lexical_analysis(){
+	initializeTerminalNames();
 	initializeReservedWordMap();
 	token_struct t;
 	do{
 		t = nextToken();
+		cout << t_terminalNames[t.token] << " ";
 	} while (t.token != ENDFILE);
 	cout << "[!] Finished lexical analysis" << endl;
 }

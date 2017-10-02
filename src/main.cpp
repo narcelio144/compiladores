@@ -1,4 +1,5 @@
 #include "analisador_lexico.h"
+#include "analisador_sintatico.h"
 
 //Definição da variável global de entrada
 ifstream inputFile;
@@ -11,10 +12,10 @@ void usage(){
 }
 
 int main(int argc, char **argv){
-	
+
 	if(argc < 2){
         usage();
-		return 1;    
+		return 1;
 	}
 
 	inputFile.open(argv[1]);
@@ -22,8 +23,7 @@ int main(int argc, char **argv){
 		cout << "[!] Unable to open file " << argv[1] << endl;
 		return 1;
 	}
-    
-	lexical_analysis();
+	parse();
 
 	return 0;
 }
