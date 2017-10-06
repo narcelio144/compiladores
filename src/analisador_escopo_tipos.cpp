@@ -12,8 +12,51 @@ listObject string_ = {-1, nullptr, SCALAR_TYPE_};
 listObject* pString = &string_;
 listObject universal_ = {-1, nullptr, SCALAR_TYPE_};
 listObject* pUniversal = &universal_;
-
 stack<t_attrib> semanticStack = stack<t_attrib>();
+
+bool checkTypes(listObject *t1, listObject *t2){
+	if( t1 == t2 )
+		return true;
+	else if( t1 == pUniversal || t2 == pUniversal )
+		return true;
+	else if( t1->eKind == UNIVERSAL_ || t2->eKind == UNIVERSAL_ )
+		return true;
+
+	//Supporting operations between an alias and a type
+	else if(t1->eKind == ALIAS_TYPE_ && t2->eKind != ALIAS_TYPE_){
+		return checkTypes(t1->_.Alias.pBaseType,t2);
+	}
+	//Supporting operations between type and an alias
+	else if(t1->eKind != ALIAS_TYPE_ && t2->eKind == ALIAS_TYPE_){
+		return checkTypes(t1,t2->_.Alias.pBaseType);
+	}
+
+	else if( t1->eKind == t2->eKind ){
+		if( t1->eKind == ALIAS_TYPE_ ){
+			return checkTypes(t1->_.Alias.pBaseType,t2->_.Alias.pBaseType);
+		}
+		else if( t1->eKind == ARRAY_TYPE_ ){
+			if( t1->_.Array.nNumElems ==t2->_.Array.nNumElems ){
+				return checkTypes(t1->_.Array.pElemType,t2->_.Array.pElemType);
+			}
+		}
+		else if( t1->eKind == STRUCT_TYPE_ ){
+			listObject *f1 = t1->_.Struct.pFields;
+			listObject *f2 = t2->_.Struct.pFields;
+			while( f1 != NULL && f2 != NULL ){
+				if( !checkTypes(f1->_.Field.pType,f2->_.Field.pType) )
+					return false;
+
+				//Coloquei isso aqui pois pra mim, esse while da apostila sem as duas linhas de baixo não faz o menor sentido
+				f1 = f1->pNext;
+				f2 = f2->pNext;
+
+			}
+		return ( f1 == NULL && f2 == NULL );
+		}
+	}
+	return false;
+}
 
 void semantics (int rule, int tokenSecundario){
 	static int name,n,l,l1,l2;

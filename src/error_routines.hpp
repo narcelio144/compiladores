@@ -2,7 +2,7 @@
 #define ERROR_ROUTINES
 
 #include "analisador_lexico.hpp"
-#include "definitions.hpp"
+#include "custom_types.hpp"
 #include "error_routines.hpp"
 
 using std::cout;

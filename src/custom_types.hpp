@@ -1,19 +1,97 @@
-#ifndef DEFINITIONS
-#define DEFINITIONS
+#ifndef CUSTOM_TYPES
+#define CUSTOM_TYPES
 
-#define IDT_RULE 74
-#define IDU_RULE 76
-#define IDD_RULE  77
-#define NB_RULE 78
-#define DF_RULE 15
+#define P_RULE 0
+#define LDE_REC_RULE 1
+#define LDE_RULE 2
+#define DE_DF_RULE 3
+#define DE_DT_RULE 4
+#define T_INTEGER_RULE 5
+#define T_CHAR_RULE 6
+#define T_BOOLEAN_RULE 7
+#define T_STRINGVAL_RULE 8
+#define T_IDU_RULE 9
+#define DT_ARRAY_RULE 10
 #define DT_STRUCT_RULE 11
+#define DT_ALIAS_RULE 12
+#define DC_REC_RULE 13
+#define DC_LI_RULE 14
+#define DF_RULE 15
+#define LP_REC_RULE 16
+#define LP_IDD_RULE 17
+#define B_RULE 18
+#define LDV_REC_RULE 19
+#define LDV_DV_RULE 20
+#define LS_REC_RULE 21
+#define LS_S_RULE 22
+#define DV_RULE 23
+#define LI_REC_RULE 24
+#define LI_IDD_RULE 25
+#define S_IF_RULE 26
+#define S_IF_ELSE_RULE 27
+#define S_WHILE_RULE 28
+#define S_DO_WHILE_RULE 29
+#define S_BLOCK_RULE 30
+#define S_LV_EQUALS_E_RULE 31
+#define S_BREAK_RULE 32
+#define S_CONTINUE_RULE 33
+#define S_RETURN_RULE 34
+#define E_AND_RULE 35
+#define E_OR_RULE 36
+#define E_L_RULE 37
+#define L_LESSTHAN_RULE 38
+#define L_GREATHERTHAN_RULE 39
+#define L_LESSOREQUAL_RULE 40
+#define L_GREATHEROREQUAL_RULE 41
+#define L_EQUALEQUAL_RULE 42
+#define L_NOTEQUAL_RULE 43
+#define L_R_RULE 44
+#define R_PLUS_RULE 45
+#define R_MINUS_RULE 46
+#define R_Y_RULE 47
+#define Y_TIMES_RULE 48
+#define Y_DIVIDE_RULE 49
+#define Y_F_RULE 50
+#define F_LV_RULE 51
+#define F_PLUSPLUS_LV_RULE 52
+#define F_MINUSMINUS_LV_RULE 53
+#define F_LV_PLUSPLUS_RULE 54
+#define F_LV_MINUSMINUS_RULE 55
+#define F_PARENTHESIS_RULE 56
+#define F_FUNCTIONUSE_RULE 57
+#define F_MINUSF_RULE 58
+#define F_NOTF_RULE 59
+#define F_TRU_RULE 60
+#define F_FALS_RULE 61
+#define F_CH_RULE 62
+#define F_ST_RULE 63
+#define F_NU_RULE 64
+#define LE_REC_RULE 65
+#define LE_E_RULE 66
+#define LV_REC_RULE 67
+#define LV_SQUARES_E_USE 68
+#define LV_IDU_RULE 69
+#define TRU_TRUE_RULE 70
+#define FALS_FALSE_USE 71
+#define CH_CHARACTER_RULE 72
+#define ST_STRINGVAL_RULE 73
+#define NU_NUMERAL_RULE 74
+#define IDT_RULE 75
+#define IDU_RULE 76
+#define IDD_RULE 77
+#define NB_RULE 78
 #define NF_RULE 79
+#define MA_RULE 80
+#define ME_RULE 81
+#define MC_RULE 82
+#define MF_RULE 83
+#define MT_RULE 84
+#define MW_RULE 85
 
 #define IS_TYPE_KIND(k) ((k)==ARRAY_TYPE_ || \
 													(k)==STRUCT_TYPE_|| \
 													(k)==ALIAS_TYPE_ || \
 													(k)==SCALAR_TYPE_)
-
 
 #define IS_SHIFT(p) ((p)>0)
 #define IS_REDUCTION(p) ((p)<0)

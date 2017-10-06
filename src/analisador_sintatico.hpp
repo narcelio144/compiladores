@@ -3,7 +3,7 @@
 
 #include "analisador_lexico.hpp"
 #include "analisador_escopo_tipos.hpp"
-#include "definitions.hpp"
+#include "custom_types.hpp"
 #include "error_routines.hpp"
 #include <stack>
 #include <unordered_map>

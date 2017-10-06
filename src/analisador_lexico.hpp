@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "definitions.hpp"
+#include "custom_types.hpp"
 
 using std::ifstream;
 using std::endl;
