@@ -1,4 +1,4 @@
-#include "analisador_lexico.h"
+#include "analisador_lexico.hpp"
 
 //Definição das variáveis globais declaradas no header
 unordered_map<string,t_token> reservedWordMap = unordered_map<string,t_token>();

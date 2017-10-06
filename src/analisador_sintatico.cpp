@@ -1,7 +1,7 @@
-#include "analisador_sintatico.h"
+#include "analisador_sintatico.hpp"
 
 vector<pair<t_nont,int>> vec_rules = vector<pair<t_nont,int>>();
-vector<unordered_map<int,int>> actionTable = vector<unordered_map<int,int>>(ACTION_TABLE_SIZE);
+vector<unordered_map<int,int>> actionTable = vector<unordered_map<int,int>>(MAX_ACTION_TABLE_SIZE);
 stack<int> states = stack<int>();
 
 //The rules vector stores the non-terminal to the left of the rule and the length of the rule
@@ -17,11 +17,11 @@ void build_rule_vector(){
 	vec_rules.push_back(make_pair(T,1));
 	vec_rules.push_back(make_pair(T,1));
 	vec_rules.push_back(make_pair(DT,9));
-	vec_rules.push_back(make_pair(DT,7));
+	vec_rules.push_back(make_pair(DT,8));
 	vec_rules.push_back(make_pair(DT,4));
 	vec_rules.push_back(make_pair(DC,5));
 	vec_rules.push_back(make_pair(DC,3));
-	vec_rules.push_back(make_pair(DF,8));
+	vec_rules.push_back(make_pair(DF,10));
 	vec_rules.push_back(make_pair(LP,5));
 	vec_rules.push_back(make_pair(LP,3));
 	vec_rules.push_back(make_pair(B,4));
@@ -32,12 +32,12 @@ void build_rule_vector(){
 	vec_rules.push_back(make_pair(DV,5));
 	vec_rules.push_back(make_pair(LI,3));
 	vec_rules.push_back(make_pair(LI,1));
-	vec_rules.push_back(make_pair(S,5));
+	vec_rules.push_back(make_pair(S,6));
+	vec_rules.push_back(make_pair(S,9));
 	vec_rules.push_back(make_pair(S,7));
+	vec_rules.push_back(make_pair(S,8));
+	vec_rules.push_back(make_pair(S,2));
 	vec_rules.push_back(make_pair(S,5));
-	vec_rules.push_back(make_pair(S,7));
-	vec_rules.push_back(make_pair(S,1));
-	vec_rules.push_back(make_pair(S,4));
 	vec_rules.push_back(make_pair(S,2));
 	vec_rules.push_back(make_pair(S,2));
 	vec_rules.push_back(make_pair(S,3));
@@ -63,7 +63,7 @@ void build_rule_vector(){
 	vec_rules.push_back(make_pair(F,2));
 	vec_rules.push_back(make_pair(F,2));
 	vec_rules.push_back(make_pair(F,3));
-	vec_rules.push_back(make_pair(F,4));
+	vec_rules.push_back(make_pair(F,5));
 	vec_rules.push_back(make_pair(F,2));
 	vec_rules.push_back(make_pair(F,2));
 	vec_rules.push_back(make_pair(F,1));
@@ -76,12 +76,22 @@ void build_rule_vector(){
 	vec_rules.push_back(make_pair(LV,3));
 	vec_rules.push_back(make_pair(LV,4));
 	vec_rules.push_back(make_pair(LV,1));
-	vec_rules.push_back(make_pair(IDT,1));
 	vec_rules.push_back(make_pair(TRU,1));
 	vec_rules.push_back(make_pair(FALS,1));
 	vec_rules.push_back(make_pair(CH,1));
 	vec_rules.push_back(make_pair(ST,1));
 	vec_rules.push_back(make_pair(NU,1));
+	vec_rules.push_back(make_pair(IDT,1));
+	vec_rules.push_back(make_pair(IDU,1));
+	vec_rules.push_back(make_pair(IDD,1));
+	vec_rules.push_back(make_pair(NB,0));
+	vec_rules.push_back(make_pair(NF,0));
+	vec_rules.push_back(make_pair(MA,0));
+	vec_rules.push_back(make_pair(ME,0));
+	vec_rules.push_back(make_pair(MC,0));
+	vec_rules.push_back(make_pair(MF,0));
+	vec_rules.push_back(make_pair(MT,0));
+	vec_rules.push_back(make_pair(MW,0));
 }
 
 void build_action_table(){
@@ -119,11 +129,11 @@ void build_action_table(){
 
 	//State: 5
 	actionTable[5][ID] = 9;
-	actionTable[5][IDT] = 8;
+	actionTable[5][IDD] = 8;
 
 	//State: 6
 	actionTable[6][ID] = 9;
-	actionTable[6][IDT] = 10;
+	actionTable[6][IDD] = 10;
 
 	//State: 7
 	actionTable[7][TYPE] = -1;
@@ -131,1944 +141,2098 @@ void build_action_table(){
 	actionTable[7][ENDFILE] = -1;
 
 	//State: 8
-	actionTable[8][LEFT_PARENTHESIS] = 11;
+	actionTable[8][LEFT_PARENTHESIS] = -79;
+	actionTable[8][NF] = 11;
 
 	//State: 9
-	actionTable[9][TYPE] = -70;
-	actionTable[9][EQUALS] = -70;
-	actionTable[9][LEFT_SQUARE] = -70;
-	actionTable[9][RIGHT_SQUARE] = -70;
-	actionTable[9][LEFT_BRACES] = -70;
-	actionTable[9][RIGHT_BRACES] = -70;
-	actionTable[9][SEMI_COLON] = -70;
-	actionTable[9][COLON] = -70;
-	actionTable[9][FUNCTION] = -70;
-	actionTable[9][LEFT_PARENTHESIS] = -70;
-	actionTable[9][RIGHT_PARENTHESIS] = -70;
-	actionTable[9][COMMA] = -70;
-	actionTable[9][AND] = -70;
-	actionTable[9][OR] = -70;
-	actionTable[9][LESS_THAN] = -70;
-	actionTable[9][GREATER_THAN] = -70;
-	actionTable[9][LESS_OR_EQUAL] = -70;
-	actionTable[9][GREATER_OR_EQUAL] = -70;
-	actionTable[9][EQUAL_EQUAL] = -70;
-	actionTable[9][EQUALS] = -70;
-	actionTable[9][PLUS] = -70;
-	actionTable[9][MINUS] = -70;
-	actionTable[9][TIMES] = -70;
-	actionTable[9][DIVIDE] = -70;
-	actionTable[9][PLUS_PLUS] = -70;
-	actionTable[9][MINUS_MINUS] = -70;
-	actionTable[9][DOT] = -70;
-	actionTable[9][ENDFILE] = -70;
+	actionTable[9][TYPE] = -77;
+	actionTable[9][EQUALS] = -77;
+	actionTable[9][COLON] = -77;
+	actionTable[9][FUNCTION] = -77;
+	actionTable[9][LEFT_PARENTHESIS] = -77;
+	actionTable[9][COMMA] = -77;
+	actionTable[9][ENDFILE] = -77;
 
 	//State: 10
 	actionTable[10][EQUALS] = 12;
 
 	//State: 11
-	actionTable[11][ID] = 9;
-	actionTable[11][LP] = 13;
-	actionTable[11][IDT] = 14;
+	actionTable[11][LEFT_PARENTHESIS] = 13;
 
 	//State: 12
-	actionTable[12][INTEGER] = 18;
-	actionTable[12][CHAR] = 19;
-	actionTable[12][BOOLEAN] = 20;
-	actionTable[12][STRING] = 21;
-	actionTable[12][ARRAY] = 15;
-	actionTable[12][STRUCT] = 16;
-	actionTable[12][ID] = 9;
-	actionTable[12][T] = 17;
-	actionTable[12][IDT] = 22;
+	actionTable[12][INTEGER] = 17;
+	actionTable[12][CHAR] = 18;
+	actionTable[12][BOOLEAN] = 19;
+	actionTable[12][STRING] = 20;
+	actionTable[12][ARRAY] = 14;
+	actionTable[12][STRUCT] = 15;
+	actionTable[12][ID] = 22;
+	actionTable[12][T] = 16;
+	actionTable[12][IDU] = 21;
 
 	//State: 13
-	actionTable[13][RIGHT_PARENTHESIS] = 23;
-	actionTable[13][COMMA] = 24;
+	actionTable[13][ID] = 9;
+	actionTable[13][LP] = 23;
+	actionTable[13][IDD] = 24;
 
 	//State: 14
-	actionTable[14][COLON] = 25;
+	actionTable[14][LEFT_SQUARE] = 25;
 
 	//State: 15
-	actionTable[15][LEFT_SQUARE] = 26;
+	actionTable[15][LEFT_BRACES] = -78;
+	actionTable[15][NB] = 26;
 
 	//State: 16
-	actionTable[16][LEFT_BRACES] = 27;
+	actionTable[16][TYPE] = -12;
+	actionTable[16][FUNCTION] = -12;
+	actionTable[16][ENDFILE] = -12;
 
 	//State: 17
-	actionTable[17][TYPE] = -12;
-	actionTable[17][FUNCTION] = -12;
-	actionTable[17][ENDFILE] = -12;
+	actionTable[17][TYPE] = -5;
+	actionTable[17][LEFT_BRACES] = -5;
+	actionTable[17][RIGHT_BRACES] = -5;
+	actionTable[17][SEMI_COLON] = -5;
+	actionTable[17][FUNCTION] = -5;
+	actionTable[17][RIGHT_PARENTHESIS] = -5;
+	actionTable[17][COMMA] = -5;
+	actionTable[17][ENDFILE] = -5;
 
 	//State: 18
-	actionTable[18][TYPE] = -5;
-	actionTable[18][LEFT_BRACES] = -5;
-	actionTable[18][RIGHT_BRACES] = -5;
-	actionTable[18][SEMI_COLON] = -5;
-	actionTable[18][FUNCTION] = -5;
-	actionTable[18][RIGHT_PARENTHESIS] = -5;
-	actionTable[18][COMMA] = -5;
-	actionTable[18][ENDFILE] = -5;
+	actionTable[18][TYPE] = -6;
+	actionTable[18][LEFT_BRACES] = -6;
+	actionTable[18][RIGHT_BRACES] = -6;
+	actionTable[18][SEMI_COLON] = -6;
+	actionTable[18][FUNCTION] = -6;
+	actionTable[18][RIGHT_PARENTHESIS] = -6;
+	actionTable[18][COMMA] = -6;
+	actionTable[18][ENDFILE] = -6;
 
 	//State: 19
-	actionTable[19][TYPE] = -6;
-	actionTable[19][LEFT_BRACES] = -6;
-	actionTable[19][RIGHT_BRACES] = -6;
-	actionTable[19][SEMI_COLON] = -6;
-	actionTable[19][FUNCTION] = -6;
-	actionTable[19][RIGHT_PARENTHESIS] = -6;
-	actionTable[19][COMMA] = -6;
-	actionTable[19][ENDFILE] = -6;
+	actionTable[19][TYPE] = -7;
+	actionTable[19][LEFT_BRACES] = -7;
+	actionTable[19][RIGHT_BRACES] = -7;
+	actionTable[19][SEMI_COLON] = -7;
+	actionTable[19][FUNCTION] = -7;
+	actionTable[19][RIGHT_PARENTHESIS] = -7;
+	actionTable[19][COMMA] = -7;
+	actionTable[19][ENDFILE] = -7;
 
 	//State: 20
-	actionTable[20][TYPE] = -7;
-	actionTable[20][LEFT_BRACES] = -7;
-	actionTable[20][RIGHT_BRACES] = -7;
-	actionTable[20][SEMI_COLON] = -7;
-	actionTable[20][FUNCTION] = -7;
-	actionTable[20][RIGHT_PARENTHESIS] = -7;
-	actionTable[20][COMMA] = -7;
-	actionTable[20][ENDFILE] = -7;
+	actionTable[20][TYPE] = -8;
+	actionTable[20][LEFT_BRACES] = -8;
+	actionTable[20][RIGHT_BRACES] = -8;
+	actionTable[20][SEMI_COLON] = -8;
+	actionTable[20][FUNCTION] = -8;
+	actionTable[20][RIGHT_PARENTHESIS] = -8;
+	actionTable[20][COMMA] = -8;
+	actionTable[20][ENDFILE] = -8;
 
 	//State: 21
-	actionTable[21][TYPE] = -8;
-	actionTable[21][LEFT_BRACES] = -8;
-	actionTable[21][RIGHT_BRACES] = -8;
-	actionTable[21][SEMI_COLON] = -8;
-	actionTable[21][FUNCTION] = -8;
-	actionTable[21][RIGHT_PARENTHESIS] = -8;
-	actionTable[21][COMMA] = -8;
-	actionTable[21][ENDFILE] = -8;
+	actionTable[21][TYPE] = -9;
+	actionTable[21][LEFT_BRACES] = -9;
+	actionTable[21][RIGHT_BRACES] = -9;
+	actionTable[21][SEMI_COLON] = -9;
+	actionTable[21][FUNCTION] = -9;
+	actionTable[21][RIGHT_PARENTHESIS] = -9;
+	actionTable[21][COMMA] = -9;
+	actionTable[21][ENDFILE] = -9;
 
 	//State: 22
-	actionTable[22][TYPE] = -9;
-	actionTable[22][LEFT_BRACES] = -9;
-	actionTable[22][RIGHT_BRACES] = -9;
-	actionTable[22][SEMI_COLON] = -9;
-	actionTable[22][FUNCTION] = -9;
-	actionTable[22][RIGHT_PARENTHESIS] = -9;
-	actionTable[22][COMMA] = -9;
-	actionTable[22][ENDFILE] = -9;
+	actionTable[22][TYPE] = -76;
+	actionTable[22][EQUALS] = -76;
+	actionTable[22][LEFT_SQUARE] = -76;
+	actionTable[22][RIGHT_SQUARE] = -76;
+	actionTable[22][LEFT_BRACES] = -76;
+	actionTable[22][RIGHT_BRACES] = -76;
+	actionTable[22][SEMI_COLON] = -76;
+	actionTable[22][FUNCTION] = -76;
+	actionTable[22][LEFT_PARENTHESIS] = -76;
+	actionTable[22][RIGHT_PARENTHESIS] = -76;
+	actionTable[22][COMMA] = -76;
+	actionTable[22][IF] = -76;
+	actionTable[22][ELSE] = -76;
+	actionTable[22][WHILE] = -76;
+	actionTable[22][DO] = -76;
+	actionTable[22][BREAK] = -76;
+	actionTable[22][CONTINUE] = -76;
+	actionTable[22][RETURN] = -76;
+	actionTable[22][AND] = -76;
+	actionTable[22][OR] = -76;
+	actionTable[22][LESS_THAN] = -76;
+	actionTable[22][GREATER_THAN] = -76;
+	actionTable[22][LESS_OR_EQUAL] = -76;
+	actionTable[22][GREATER_OR_EQUAL] = -76;
+	actionTable[22][EQUAL_EQUAL] = -76;
+	actionTable[22][NOT_EQUAL] = -76;
+	actionTable[22][PLUS] = -76;
+	actionTable[22][MINUS] = -76;
+	actionTable[22][TIMES] = -76;
+	actionTable[22][DIVIDE] = -76;
+	actionTable[22][PLUS_PLUS] = -76;
+	actionTable[22][MINUS_MINUS] = -76;
+	actionTable[22][DOT] = -76;
+	actionTable[22][ID] = -76;
+	actionTable[22][ENDFILE] = -76;
 
 	//State: 23
-	actionTable[23][COLON] = 28;
+	actionTable[23][RIGHT_PARENTHESIS] = 27;
+	actionTable[23][COMMA] = 28;
 
 	//State: 24
-	actionTable[24][ID] = 9;
-	actionTable[24][IDT] = 29;
+	actionTable[24][COLON] = 29;
 
 	//State: 25
-	actionTable[25][INTEGER] = 18;
-	actionTable[25][CHAR] = 19;
-	actionTable[25][BOOLEAN] = 20;
-	actionTable[25][STRING] = 21;
-	actionTable[25][ID] = 9;
-	actionTable[25][T] = 30;
-	actionTable[25][IDT] = 22;
+	actionTable[25][NUMERAL] = 31;
+	actionTable[25][NU] = 30;
 
 	//State: 26
-	actionTable[26][NUMERAL] = 32;
-	actionTable[26][NU] = 31
-	;
+	actionTable[26][LEFT_BRACES] = 32;
 
 	//State: 27
-	actionTable[27][ID] = 9;
-	actionTable[27][DC] = 33;
-	actionTable[27][LI] = 34;
-	actionTable[27][IDT] = 35;
+	actionTable[27][COLON] = 33;
 
 	//State: 28
-	actionTable[28][INTEGER] = 18;
-	actionTable[28][CHAR] = 19;
-	actionTable[28][BOOLEAN] = 20;
-	actionTable[28][STRING] = 21;
 	actionTable[28][ID] = 9;
-	actionTable[28][T] = 36;
-	actionTable[28][IDT] = 22;
+	actionTable[28][IDD] = 34;
 
 	//State: 29
-	actionTable[29][COLON] = 37;
+	actionTable[29][INTEGER] = 17;
+	actionTable[29][CHAR] = 18;
+	actionTable[29][BOOLEAN] = 19;
+	actionTable[29][STRING] = 20;
+	actionTable[29][ID] = 22;
+	actionTable[29][T] = 35;
+	actionTable[29][IDU] = 21;
 
 	//State: 30
-	actionTable[30][RIGHT_PARENTHESIS] = -17;
-	actionTable[30][COMMA] = -17;
+	actionTable[30][RIGHT_SQUARE] = 36;
 
 	//State: 31
-	actionTable[31][RIGHT_SQUARE] = 38;
+	actionTable[31][RIGHT_SQUARE] = -74;
+	actionTable[31][SEMI_COLON] = -74;
+	actionTable[31][RIGHT_PARENTHESIS] = -74;
+	actionTable[31][COMMA] = -74;
+	actionTable[31][AND] = -74;
+	actionTable[31][OR] = -74;
+	actionTable[31][LESS_THAN] = -74;
+	actionTable[31][GREATER_THAN] = -74;
+	actionTable[31][LESS_OR_EQUAL] = -74;
+	actionTable[31][GREATER_OR_EQUAL] = -74;
+	actionTable[31][EQUAL_EQUAL] = -74;
+	actionTable[31][NOT_EQUAL] = -74;
+	actionTable[31][PLUS] = -74;
+	actionTable[31][MINUS] = -74;
+	actionTable[31][TIMES] = -74;
+	actionTable[31][DIVIDE] = -74;
 
 	//State: 32
-	actionTable[32][RIGHT_SQUARE] = -75;
-	actionTable[32][SEMI_COLON] = -75;
-	actionTable[32][RIGHT_PARENTHESIS] = -75;
-	actionTable[32][COMMA] = -75;
-	actionTable[32][AND] = -75;
-	actionTable[32][OR] = -75;
-	actionTable[32][LESS_THAN] = -75;
-	actionTable[32][GREATER_THAN] = -75;
-	actionTable[32][LESS_OR_EQUAL] = -75;
-	actionTable[32][GREATER_OR_EQUAL] = -75;
-	actionTable[32][EQUAL_EQUAL] = -75;
-	actionTable[32][EQUALS] = -75;
-	actionTable[32][PLUS] = -75;
-	actionTable[32][MINUS] = -75;
-	actionTable[32][TIMES] = -75;
-	actionTable[32][DIVIDE] = -75;
+	actionTable[32][ID] = 9;
+	actionTable[32][DC] = 37;
+	actionTable[32][LI] = 38;
+	actionTable[32][IDD] = 39;
 
 	//State: 33
-	actionTable[33][RIGHT_BRACES] = 39;
-	actionTable[33][SEMI_COLON] = 40;
+	actionTable[33][INTEGER] = 17;
+	actionTable[33][CHAR] = 18;
+	actionTable[33][BOOLEAN] = 19;
+	actionTable[33][STRING] = 20;
+	actionTable[33][ID] = 22;
+	actionTable[33][T] = 40;
+	actionTable[33][IDU] = 21;
 
 	//State: 34
 	actionTable[34][COLON] = 41;
-	actionTable[34][COMMA] = 42;
 
 	//State: 35
-	actionTable[35][COLON] = -25;
-	actionTable[35][COMMA] = -25;
+	actionTable[35][RIGHT_PARENTHESIS] = -17;
+	actionTable[35][COMMA] = -17;
 
 	//State: 36
-	actionTable[36][LEFT_BRACES] = 44;
-	actionTable[36][B] = 43;
+	actionTable[36][OF] = 42;
 
 	//State: 37
-	actionTable[37][INTEGER] = 18;
-	actionTable[37][CHAR] = 19;
-	actionTable[37][BOOLEAN] = 20;
-	actionTable[37][STRING] = 21;
-	actionTable[37][ID] = 9;
-	actionTable[37][T] = 45;
-	actionTable[37][IDT] = 22;
+	actionTable[37][RIGHT_BRACES] = 43;
+	actionTable[37][SEMI_COLON] = 44;
 
 	//State: 38
-	actionTable[38][OF] = 46;
+	actionTable[38][COLON] = 45;
+	actionTable[38][COMMA] = 46;
 
 	//State: 39
-	actionTable[39][TYPE] = -11;
-	actionTable[39][FUNCTION] = -11;
-	actionTable[39][ENDFILE] = -11;
+	actionTable[39][COLON] = -25;
+	actionTable[39][COMMA] = -25;
 
 	//State: 40
-	actionTable[40][ID] = 9;
-	actionTable[40][LI] = 47;
-	actionTable[40][IDT] = 35;
+	actionTable[40][LEFT_BRACES] = -83;
+	actionTable[40][MF] = 47;
 
 	//State: 41
-	actionTable[41][INTEGER] = 18;
-	actionTable[41][CHAR] = 19;
-	actionTable[41][BOOLEAN] = 20;
-	actionTable[41][STRING] = 21;
-	actionTable[41][ID] = 9;
+	actionTable[41][INTEGER] = 17;
+	actionTable[41][CHAR] = 18;
+	actionTable[41][BOOLEAN] = 19;
+	actionTable[41][STRING] = 20;
+	actionTable[41][ID] = 22;
 	actionTable[41][T] = 48;
-	actionTable[41][IDT] = 22;
+	actionTable[41][IDU] = 21;
 
 	//State: 42
-	actionTable[42][ID] = 9;
-	actionTable[42][IDT] = 49;
+	actionTable[42][INTEGER] = 17;
+	actionTable[42][CHAR] = 18;
+	actionTable[42][BOOLEAN] = 19;
+	actionTable[42][STRING] = 20;
+	actionTable[42][ID] = 22;
+	actionTable[42][T] = 49;
+	actionTable[42][IDU] = 21;
 
 	//State: 43
-	actionTable[43][TYPE] = -15;
-	actionTable[43][FUNCTION] = -15;
-	actionTable[43][ENDFILE] = -15;
+	actionTable[43][TYPE] = -11;
+	actionTable[43][FUNCTION] = -11;
+	actionTable[43][ENDFILE] = -11;
 
 	//State: 44
-	actionTable[44][VAR] = 52;
-	actionTable[44][LDV] = 50;
-	actionTable[44][DV] = 51;
+	actionTable[44][ID] = 9;
+	actionTable[44][LI] = 50;
+	actionTable[44][IDD] = 39;
 
 	//State: 45
-	actionTable[45][RIGHT_PARENTHESIS] = -16;
-	actionTable[45][COMMA] = -16;
+	actionTable[45][INTEGER] = 17;
+	actionTable[45][CHAR] = 18;
+	actionTable[45][BOOLEAN] = 19;
+	actionTable[45][STRING] = 20;
+	actionTable[45][ID] = 22;
+	actionTable[45][T] = 51;
+	actionTable[45][IDU] = 21;
 
 	//State: 46
-	actionTable[46][INTEGER] = 18;
-	actionTable[46][CHAR] = 19;
-	actionTable[46][BOOLEAN] = 20;
-	actionTable[46][STRING] = 21;
 	actionTable[46][ID] = 9;
-	actionTable[46][T] = 53;
-	actionTable[46][IDT] = 22;
+	actionTable[46][IDD] = 52;
 
 	//State: 47
-	actionTable[47][COLON] = 54;
-	actionTable[47][COMMA] = 42;
+	actionTable[47][LEFT_BRACES] = 54;
+	actionTable[47][B] = 53;
 
 	//State: 48
-	actionTable[48][RIGHT_BRACES] = -14;
-	actionTable[48][SEMI_COLON] = -14;
+	actionTable[48][RIGHT_PARENTHESIS] = -16;
+	actionTable[48][COMMA] = -16;
 
 	//State: 49
-	actionTable[49][COLON] = -24;
-	actionTable[49][COMMA] = -24;
+	actionTable[49][TYPE] = -10;
+	actionTable[49][FUNCTION] = -10;
+	actionTable[49][ENDFILE] = -10;
 
 	//State: 50
-	actionTable[50][LEFT_BRACES] = 44;
-	actionTable[50][VAR] = 52;
-	actionTable[50][IF] = 58;
-	actionTable[50][WHILE] = 59;
-	actionTable[50][DO] = 60;
-	actionTable[50][BREAK] = 63;
-	actionTable[50][CONTINUE] = 64;
-	actionTable[50][RETURN] = 65;
-	actionTable[50][ID] = 9;
-	actionTable[50][B] = 61;
-	actionTable[50][LS] = 55;
-	actionTable[50][DV] = 56;
-	actionTable[50][S] = 57;
-	actionTable[50][LV] = 62;
-	actionTable[50][IDT] = 66;
+	actionTable[50][COLON] = 55;
+	actionTable[50][COMMA] = 46;
 
 	//State: 51
-	actionTable[51][LEFT_BRACES] = -20;
-	actionTable[51][VAR] = -20;
-	actionTable[51][IF] = -20;
-	actionTable[51][WHILE] = -20;
-	actionTable[51][DO] = -20;
-	actionTable[51][BREAK] = -20;
-	actionTable[51][CONTINUE] = -20;
-	actionTable[51][RETURN] = -20;
-	actionTable[51][ID] = -20;
+	actionTable[51][RIGHT_BRACES] = -14;
+	actionTable[51][SEMI_COLON] = -14;
 
 	//State: 52
-	actionTable[52][ID] = 9;
-	actionTable[52][LI] = 67;
-	actionTable[52][IDT] = 35;
+	actionTable[52][COLON] = -24;
+	actionTable[52][COMMA] = -24;
 
 	//State: 53
-	actionTable[53][TYPE] = -10;
-	actionTable[53][FUNCTION] = -10;
-	actionTable[53][ENDFILE] = -10;
+	actionTable[53][TYPE] = -15;
+	actionTable[53][FUNCTION] = -15;
+	actionTable[53][ENDFILE] = -15;
 
 	//State: 54
-	actionTable[54][INTEGER] = 18;
-	actionTable[54][CHAR] = 19;
-	actionTable[54][BOOLEAN] = 20;
-	actionTable[54][STRING] = 21;
-	actionTable[54][ID] = 9;
-	actionTable[54][T] = 68;
-	actionTable[54][IDT] = 22;
+	actionTable[54][VAR] = 58;
+	actionTable[54][LDV] = 56;
+	actionTable[54][DV] = 57;
 
 	//State: 55
-	actionTable[55][LEFT_BRACES] = 44;
-	actionTable[55][RIGHT_BRACES] = 69;
-	actionTable[55][IF] = 58;
-	actionTable[55][WHILE] = 59;
-	actionTable[55][DO] = 60;
-	actionTable[55][BREAK] = 63;
-	actionTable[55][CONTINUE] = 64;
-	actionTable[55][RETURN] = 65;
-	actionTable[55][ID] = 9;
-	actionTable[55][B] = 61;
-	actionTable[55][S] = 70;
-	actionTable[55][LV] = 62;
-	actionTable[55][IDT] = 66;
+	actionTable[55][INTEGER] = 17;
+	actionTable[55][CHAR] = 18;
+	actionTable[55][BOOLEAN] = 19;
+	actionTable[55][STRING] = 20;
+	actionTable[55][ID] = 22;
+	actionTable[55][T] = 59;
+	actionTable[55][IDU] = 21;
 
 	//State: 56
-	actionTable[56][LEFT_BRACES] = -19;
-	actionTable[56][VAR] = -19;
-	actionTable[56][IF] = -19;
-	actionTable[56][WHILE] = -19;
-	actionTable[56][DO] = -19;
-	actionTable[56][BREAK] = -19;
-	actionTable[56][CONTINUE] = -19;
-	actionTable[56][RETURN] = -19;
-	actionTable[56][ID] = -19;
+	actionTable[56][LEFT_BRACES] = -78;
+	actionTable[56][VAR] = 58;
+	actionTable[56][IF] = 63;
+	actionTable[56][WHILE] = 64;
+	actionTable[56][DO] = 65;
+	actionTable[56][BREAK] = 68;
+	actionTable[56][CONTINUE] = 69;
+	actionTable[56][RETURN] = 70;
+	actionTable[56][ID] = 22;
+	actionTable[56][LS] = 60;
+	actionTable[56][DV] = 61;
+	actionTable[56][S] = 62;
+	actionTable[56][LV] = 67;
+	actionTable[56][IDU] = 71;
+	actionTable[56][NB] = 66;
 
 	//State: 57
-	actionTable[57][LEFT_BRACES] = -22;
-	actionTable[57][RIGHT_BRACES] = -22;
-	actionTable[57][IF] = -22;
-	actionTable[57][WHILE] = -22;
-	actionTable[57][DO] = -22;
-	actionTable[57][BREAK] = -22;
-	actionTable[57][CONTINUE] = -22;
-	actionTable[57][RETURN] = -22;
-	actionTable[57][ID] = -22;
+	actionTable[57][TYPE] = -20;
+	actionTable[57][LEFT_BRACES] = -20;
+	actionTable[57][RIGHT_BRACES] = -20;
+	actionTable[57][FUNCTION] = -20;
+	actionTable[57][VAR] = -20;
+	actionTable[57][IF] = -20;
+	actionTable[57][ELSE] = -20;
+	actionTable[57][WHILE] = -20;
+	actionTable[57][DO] = -20;
+	actionTable[57][BREAK] = -20;
+	actionTable[57][CONTINUE] = -20;
+	actionTable[57][RETURN] = -20;
+	actionTable[57][ID] = -20;
+	actionTable[57][ENDFILE] = -20;
 
 	//State: 58
-	actionTable[58][LEFT_PARENTHESIS] = 71;
+	actionTable[58][ID] = 9;
+	actionTable[58][LI] = 72;
+	actionTable[58][IDD] = 39;
 
 	//State: 59
-	actionTable[59][LEFT_PARENTHESIS] = 72;
+	actionTable[59][RIGHT_BRACES] = -13;
+	actionTable[59][SEMI_COLON] = -13;
 
 	//State: 60
-	actionTable[60][LEFT_BRACES] = 44;
-	actionTable[60][IF] = 58;
-	actionTable[60][WHILE] = 59;
-	actionTable[60][DO] = 60;
-	actionTable[60][BREAK] = 63;
-	actionTable[60][CONTINUE] = 64;
-	actionTable[60][RETURN] = 65;
-	actionTable[60][ID] = 9;
-	actionTable[60][B] = 61;
-	actionTable[60][S] = 73;
-	actionTable[60][LV] = 62;
-	actionTable[60][IDT] = 66;
+	actionTable[60][LEFT_BRACES] = -78;
+	actionTable[60][RIGHT_BRACES] = 73;
+	actionTable[60][IF] = 63;
+	actionTable[60][WHILE] = 64;
+	actionTable[60][DO] = 65;
+	actionTable[60][BREAK] = 68;
+	actionTable[60][CONTINUE] = 69;
+	actionTable[60][RETURN] = 70;
+	actionTable[60][ID] = 22;
+	actionTable[60][S] = 74;
+	actionTable[60][LV] = 67;
+	actionTable[60][IDU] = 71;
+	actionTable[60][NB] = 66;
 
 	//State: 61
-	actionTable[61][LEFT_BRACES] = -30;
-	actionTable[61][RIGHT_BRACES] = -30;
-	actionTable[61][IF] = -30;
-	actionTable[61][ELSE] = -30;
-	actionTable[61][WHILE] = -30;
-	actionTable[61][DO] = -30;
-	actionTable[61][BREAK] = -30;
-	actionTable[61][CONTINUE] = -30;
-	actionTable[61][RETURN] = -30;
-	actionTable[61][ID] = -30;
+	actionTable[61][TYPE] = -19;
+	actionTable[61][LEFT_BRACES] = -19;
+	actionTable[61][RIGHT_BRACES] = -19;
+	actionTable[61][FUNCTION] = -19;
+	actionTable[61][VAR] = -19;
+	actionTable[61][IF] = -19;
+	actionTable[61][ELSE] = -19;
+	actionTable[61][WHILE] = -19;
+	actionTable[61][DO] = -19;
+	actionTable[61][BREAK] = -19;
+	actionTable[61][CONTINUE] = -19;
+	actionTable[61][RETURN] = -19;
+	actionTable[61][ID] = -19;
+	actionTable[61][ENDFILE] = -19;
 
 	//State: 62
-	actionTable[62][EQUALS] = 74;
-	actionTable[62][LEFT_SQUARE] = 76;
-	actionTable[62][DOT] = 75;
+	actionTable[62][LEFT_BRACES] = -22;
+	actionTable[62][RIGHT_BRACES] = -22;
+	actionTable[62][IF] = -22;
+	actionTable[62][WHILE] = -22;
+	actionTable[62][DO] = -22;
+	actionTable[62][BREAK] = -22;
+	actionTable[62][CONTINUE] = -22;
+	actionTable[62][RETURN] = -22;
+	actionTable[62][ID] = -22;
 
 	//State: 63
-	actionTable[63][SEMI_COLON] = 77;
+	actionTable[63][LEFT_PARENTHESIS] = 75;
 
 	//State: 64
-	actionTable[64][SEMI_COLON] = 78;
+	actionTable[64][LEFT_PARENTHESIS] = -85;
+	actionTable[64][MW] = 76;
 
 	//State: 65
-	actionTable[65][LEFT_PARENTHESIS] = 87;
-	actionTable[65][MINUS] = 89;
-	actionTable[65][PLUS_PLUS] = 85;
-	actionTable[65][MINUS_MINUS] = 86;
-	actionTable[65][NOT] = 90;
-	actionTable[65][ID] = 9;
-	actionTable[65][TRUE] = 96;
-	actionTable[65][FALSE] = 97;
-	actionTable[65][CHARACTER] = 98;
-	actionTable[65][STRINGVAL] = 99;
-	actionTable[65][NUMERAL] = 32;
-	actionTable[65][E] = 79;
-	actionTable[65][L] = 80;
-	actionTable[65][R] = 81;
-	actionTable[65][Y] = 82;
-	actionTable[65][F] = 83;
-	actionTable[65][LV] = 84;
-	actionTable[65][IDT] = 88;
-	actionTable[65][TRU] = 91;
-	actionTable[65][FALS] = 92;
-	actionTable[65][CH] = 93;
-	actionTable[65][ST] = 94;
-	actionTable[65][NU] = 95
-	;
+	actionTable[65][LEFT_BRACES] = -85;
+	actionTable[65][RIGHT_BRACES] = -85;
+	actionTable[65][IF] = -85;
+	actionTable[65][ELSE] = -85;
+	actionTable[65][WHILE] = -85;
+	actionTable[65][DO] = -85;
+	actionTable[65][BREAK] = -85;
+	actionTable[65][CONTINUE] = -85;
+	actionTable[65][RETURN] = -85;
+	actionTable[65][ID] = -85;
+	actionTable[65][MW] = 77;
 
 	//State: 66
-	actionTable[66][EQUALS] = -69;
-	actionTable[66][LEFT_SQUARE] = -69;
-	actionTable[66][RIGHT_SQUARE] = -69;
-	actionTable[66][SEMI_COLON] = -69;
-	actionTable[66][RIGHT_PARENTHESIS] = -69;
-	actionTable[66][COMMA] = -69;
-	actionTable[66][AND] = -69;
-	actionTable[66][OR] = -69;
-	actionTable[66][LESS_THAN] = -69;
-	actionTable[66][GREATER_THAN] = -69;
-	actionTable[66][LESS_OR_EQUAL] = -69;
-	actionTable[66][GREATER_OR_EQUAL] = -69;
-	actionTable[66][EQUAL_EQUAL] = -69;
-	actionTable[66][EQUALS] = -69;
-	actionTable[66][PLUS] = -69;
-	actionTable[66][MINUS] = -69;
-	actionTable[66][TIMES] = -69;
-	actionTable[66][DIVIDE] = -69;
-	actionTable[66][DOT] = -69;
+	actionTable[66][LEFT_BRACES] = 54;
+	actionTable[66][B] = 78;
 
 	//State: 67
-	actionTable[67][COLON] = 100;
-	actionTable[67][COMMA] = 42;
+	actionTable[67][EQUALS] = -80;
+	actionTable[67][LEFT_SQUARE] = 81;
+	actionTable[67][DOT] = 80;
+	actionTable[67][MA] = 79;
 
 	//State: 68
-	actionTable[68][RIGHT_BRACES] = -13;
-	actionTable[68][SEMI_COLON] = -13;
+	actionTable[68][SEMI_COLON] = 82;
 
 	//State: 69
-	actionTable[69][TYPE] = -18;
-	actionTable[69][LEFT_BRACES] = -18;
-	actionTable[69][RIGHT_BRACES] = -18;
-	actionTable[69][FUNCTION] = -18;
-	actionTable[69][IF] = -18;
-	actionTable[69][ELSE] = -18;
-	actionTable[69][WHILE] = -18;
-	actionTable[69][DO] = -18;
-	actionTable[69][BREAK] = -18;
-	actionTable[69][CONTINUE] = -18;
-	actionTable[69][RETURN] = -18;
-	actionTable[69][ID] = -18;
-	actionTable[69][ENDFILE] = -18;
+	actionTable[69][SEMI_COLON] = 83;
 
 	//State: 70
-	actionTable[70][LEFT_BRACES] = -21;
-	actionTable[70][RIGHT_BRACES] = -21;
-	actionTable[70][IF] = -21;
-	actionTable[70][WHILE] = -21;
-	actionTable[70][DO] = -21;
-	actionTable[70][BREAK] = -21;
-	actionTable[70][CONTINUE] = -21;
-	actionTable[70][RETURN] = -21;
-	actionTable[70][ID] = -21;
+	actionTable[70][LEFT_PARENTHESIS] = 92;
+	actionTable[70][MINUS] = 94;
+	actionTable[70][PLUS_PLUS] = 90;
+	actionTable[70][MINUS_MINUS] = 91;
+	actionTable[70][NOT] = 95;
+	actionTable[70][TRUE] = 101;
+	actionTable[70][FALSE] = 102;
+	actionTable[70][CHARACTER] = 103;
+	actionTable[70][STRINGVAL] = 104;
+	actionTable[70][NUMERAL] = 31;
+	actionTable[70][ID] = 22;
+	actionTable[70][E] = 84;
+	actionTable[70][L] = 85;
+	actionTable[70][R] = 86;
+	actionTable[70][Y] = 87;
+	actionTable[70][F] = 88;
+	actionTable[70][LV] = 89;
+	actionTable[70][TRU] = 96;
+	actionTable[70][FALS] = 97;
+	actionTable[70][CH] = 98;
+	actionTable[70][ST] = 99;
+	actionTable[70][NU] = 100;
+	actionTable[70][IDU] = 93;
 
 	//State: 71
-	actionTable[71][LEFT_PARENTHESIS] = 87;
-	actionTable[71][MINUS] = 89;
-	actionTable[71][PLUS_PLUS] = 85;
-	actionTable[71][MINUS_MINUS] = 86;
-	actionTable[71][NOT] = 90;
-	actionTable[71][ID] = 9;
-	actionTable[71][TRUE] = 96;
-	actionTable[71][FALSE] = 97;
-	actionTable[71][CHARACTER] = 98;
-	actionTable[71][STRINGVAL] = 99;
-	actionTable[71][NUMERAL] = 32;
-	actionTable[71][E] = 101;
-	actionTable[71][L] = 80;
-	actionTable[71][R] = 81;
-	actionTable[71][Y] = 82;
-	actionTable[71][F] = 83;
-	actionTable[71][LV] = 84;
-	actionTable[71][IDT] = 88;
-	actionTable[71][TRU] = 91;
-	actionTable[71][FALS] = 92;
-	actionTable[71][CH] = 93;
-	actionTable[71][ST] = 94;
-	actionTable[71][NU] = 95
-	;
+	actionTable[71][EQUALS] = -69;
+	actionTable[71][LEFT_SQUARE] = -69;
+	actionTable[71][RIGHT_SQUARE] = -69;
+	actionTable[71][LEFT_BRACES] = -69;
+	actionTable[71][RIGHT_BRACES] = -69;
+	actionTable[71][SEMI_COLON] = -69;
+	actionTable[71][RIGHT_PARENTHESIS] = -69;
+	actionTable[71][COMMA] = -69;
+	actionTable[71][IF] = -69;
+	actionTable[71][ELSE] = -69;
+	actionTable[71][WHILE] = -69;
+	actionTable[71][DO] = -69;
+	actionTable[71][BREAK] = -69;
+	actionTable[71][CONTINUE] = -69;
+	actionTable[71][RETURN] = -69;
+	actionTable[71][AND] = -69;
+	actionTable[71][OR] = -69;
+	actionTable[71][LESS_THAN] = -69;
+	actionTable[71][GREATER_THAN] = -69;
+	actionTable[71][LESS_OR_EQUAL] = -69;
+	actionTable[71][GREATER_OR_EQUAL] = -69;
+	actionTable[71][EQUAL_EQUAL] = -69;
+	actionTable[71][NOT_EQUAL] = -69;
+	actionTable[71][PLUS] = -69;
+	actionTable[71][MINUS] = -69;
+	actionTable[71][TIMES] = -69;
+	actionTable[71][DIVIDE] = -69;
+	actionTable[71][DOT] = -69;
+	actionTable[71][ID] = -69;
 
 	//State: 72
-	actionTable[72][LEFT_PARENTHESIS] = 87;
-	actionTable[72][MINUS] = 89;
-	actionTable[72][PLUS_PLUS] = 85;
-	actionTable[72][MINUS_MINUS] = 86;
-	actionTable[72][NOT] = 90;
-	actionTable[72][ID] = 9;
-	actionTable[72][TRUE] = 96;
-	actionTable[72][FALSE] = 97;
-	actionTable[72][CHARACTER] = 98;
-	actionTable[72][STRINGVAL] = 99;
-	actionTable[72][NUMERAL] = 32;
-	actionTable[72][E] = 102;
-	actionTable[72][L] = 80;
-	actionTable[72][R] = 81;
-	actionTable[72][Y] = 82;
-	actionTable[72][F] = 83;
-	actionTable[72][LV] = 84;
-	actionTable[72][IDT] = 88;
-	actionTable[72][TRU] = 91;
-	actionTable[72][FALS] = 92;
-	actionTable[72][CH] = 93;
-	actionTable[72][ST] = 94;
-	actionTable[72][NU] = 95
-	;
+	actionTable[72][COLON] = 105;
+	actionTable[72][COMMA] = 46;
 
 	//State: 73
-	actionTable[73][WHILE] = 103;
+	actionTable[73][TYPE] = -18;
+	actionTable[73][LEFT_BRACES] = -18;
+	actionTable[73][RIGHT_BRACES] = -18;
+	actionTable[73][FUNCTION] = -18;
+	actionTable[73][IF] = -18;
+	actionTable[73][ELSE] = -18;
+	actionTable[73][WHILE] = -18;
+	actionTable[73][DO] = -18;
+	actionTable[73][BREAK] = -18;
+	actionTable[73][CONTINUE] = -18;
+	actionTable[73][RETURN] = -18;
+	actionTable[73][ID] = -18;
+	actionTable[73][ENDFILE] = -18;
 
 	//State: 74
-	actionTable[74][LEFT_PARENTHESIS] = 87;
-	actionTable[74][MINUS] = 89;
-	actionTable[74][PLUS_PLUS] = 85;
-	actionTable[74][MINUS_MINUS] = 86;
-	actionTable[74][NOT] = 90;
-	actionTable[74][ID] = 9;
-	actionTable[74][TRUE] = 96;
-	actionTable[74][FALSE] = 97;
-	actionTable[74][CHARACTER] = 98;
-	actionTable[74][STRINGVAL] = 99;
-	actionTable[74][NUMERAL] = 32;
-	actionTable[74][E] = 104;
-	actionTable[74][L] = 80;
-	actionTable[74][R] = 81;
-	actionTable[74][Y] = 82;
-	actionTable[74][F] = 83;
-	actionTable[74][LV] = 84;
-	actionTable[74][IDT] = 88;
-	actionTable[74][TRU] = 91;
-	actionTable[74][FALS] = 92;
-	actionTable[74][CH] = 93;
-	actionTable[74][ST] = 94;
-	actionTable[74][NU] = 95
-	;
+	actionTable[74][LEFT_BRACES] = -21;
+	actionTable[74][RIGHT_BRACES] = -21;
+	actionTable[74][IF] = -21;
+	actionTable[74][WHILE] = -21;
+	actionTable[74][DO] = -21;
+	actionTable[74][BREAK] = -21;
+	actionTable[74][CONTINUE] = -21;
+	actionTable[74][RETURN] = -21;
+	actionTable[74][ID] = -21;
 
 	//State: 75
-	actionTable[75][ID] = 9;
-	actionTable[75][IDT] = 105;
+	actionTable[75][LEFT_PARENTHESIS] = 92;
+	actionTable[75][MINUS] = 94;
+	actionTable[75][PLUS_PLUS] = 90;
+	actionTable[75][MINUS_MINUS] = 91;
+	actionTable[75][NOT] = 95;
+	actionTable[75][TRUE] = 101;
+	actionTable[75][FALSE] = 102;
+	actionTable[75][CHARACTER] = 103;
+	actionTable[75][STRINGVAL] = 104;
+	actionTable[75][NUMERAL] = 31;
+	actionTable[75][ID] = 22;
+	actionTable[75][E] = 106;
+	actionTable[75][L] = 85;
+	actionTable[75][R] = 86;
+	actionTable[75][Y] = 87;
+	actionTable[75][F] = 88;
+	actionTable[75][LV] = 89;
+	actionTable[75][TRU] = 96;
+	actionTable[75][FALS] = 97;
+	actionTable[75][CH] = 98;
+	actionTable[75][ST] = 99;
+	actionTable[75][NU] = 100;
+	actionTable[75][IDU] = 93;
 
 	//State: 76
-	actionTable[76][LEFT_PARENTHESIS] = 87;
-	actionTable[76][MINUS] = 89;
-	actionTable[76][PLUS_PLUS] = 85;
-	actionTable[76][MINUS_MINUS] = 86;
-	actionTable[76][NOT] = 90;
-	actionTable[76][ID] = 9;
-	actionTable[76][TRUE] = 96;
-	actionTable[76][FALSE] = 97;
-	actionTable[76][CHARACTER] = 98;
-	actionTable[76][STRINGVAL] = 99;
-	actionTable[76][NUMERAL] = 32;
-	actionTable[76][E] = 106;
-	actionTable[76][L] = 80;
-	actionTable[76][R] = 81;
-	actionTable[76][Y] = 82;
-	actionTable[76][F] = 83;
-	actionTable[76][LV] = 84;
-	actionTable[76][IDT] = 88;
-	actionTable[76][TRU] = 91;
-	actionTable[76][FALS] = 92;
-	actionTable[76][CH] = 93;
-	actionTable[76][ST] = 94;
-	actionTable[76][NU] = 95
-	;
+	actionTable[76][LEFT_PARENTHESIS] = 107;
 
 	//State: 77
-	actionTable[77][LEFT_BRACES] = -32;
-	actionTable[77][RIGHT_BRACES] = -32;
-	actionTable[77][IF] = -32;
-	actionTable[77][ELSE] = -32;
-	actionTable[77][WHILE] = -32;
-	actionTable[77][DO] = -32;
-	actionTable[77][BREAK] = -32;
-	actionTable[77][CONTINUE] = -32;
-	actionTable[77][RETURN] = -32;
-	actionTable[77][ID] = -32;
+	actionTable[77][LEFT_BRACES] = -78;
+	actionTable[77][IF] = 63;
+	actionTable[77][WHILE] = 64;
+	actionTable[77][DO] = 65;
+	actionTable[77][BREAK] = 68;
+	actionTable[77][CONTINUE] = 69;
+	actionTable[77][RETURN] = 70;
+	actionTable[77][ID] = 22;
+	actionTable[77][S] = 108;
+	actionTable[77][LV] = 67;
+	actionTable[77][IDU] = 71;
+	actionTable[77][NB] = 66;
 
 	//State: 78
-	actionTable[78][LEFT_BRACES] = -33;
-	actionTable[78][RIGHT_BRACES] = -33;
-	actionTable[78][IF] = -33;
-	actionTable[78][ELSE] = -33;
-	actionTable[78][WHILE] = -33;
-	actionTable[78][DO] = -33;
-	actionTable[78][BREAK] = -33;
-	actionTable[78][CONTINUE] = -33;
-	actionTable[78][RETURN] = -33;
-	actionTable[78][ID] = -33;
+	actionTable[78][LEFT_BRACES] = -30;
+	actionTable[78][RIGHT_BRACES] = -30;
+	actionTable[78][IF] = -30;
+	actionTable[78][ELSE] = -30;
+	actionTable[78][WHILE] = -30;
+	actionTable[78][DO] = -30;
+	actionTable[78][BREAK] = -30;
+	actionTable[78][CONTINUE] = -30;
+	actionTable[78][RETURN] = -30;
+	actionTable[78][ID] = -30;
 
 	//State: 79
-	actionTable[79][SEMI_COLON] = 107;
-	actionTable[79][AND] = 108;
-	actionTable[79][OR] = 109;
+	actionTable[79][EQUALS] = 109;
 
 	//State: 80
-	actionTable[80][RIGHT_SQUARE] = -37;
-	actionTable[80][SEMI_COLON] = -37;
-	actionTable[80][RIGHT_PARENTHESIS] = -37;
-	actionTable[80][COMMA] = -37;
-	actionTable[80][AND] = -37;
-	actionTable[80][OR] = -37;
-	actionTable[80][LESS_THAN] = 110;
-	actionTable[80][GREATER_THAN] = 111;
-	actionTable[80][LESS_OR_EQUAL] = 112;
-	actionTable[80][GREATER_OR_EQUAL] = 113;
-	actionTable[80][EQUAL_EQUAL] = 114;
-	actionTable[80][EQUALS] = 115;
+	actionTable[80][ID] = 111;
+	actionTable[80][IDT] = 110;
 
 	//State: 81
-	actionTable[81][RIGHT_SQUARE] = -44;
-	actionTable[81][SEMI_COLON] = -44;
-	actionTable[81][RIGHT_PARENTHESIS] = -44;
-	actionTable[81][COMMA] = -44;
-	actionTable[81][AND] = -44;
-	actionTable[81][OR] = -44;
-	actionTable[81][LESS_THAN] = -44;
-	actionTable[81][GREATER_THAN] = -44;
-	actionTable[81][LESS_OR_EQUAL] = -44;
-	actionTable[81][GREATER_OR_EQUAL] = -44;
-	actionTable[81][EQUAL_EQUAL] = -44;
-	actionTable[81][EQUALS] = -44;
-	actionTable[81][PLUS] = 116;
-	actionTable[81][MINUS] = 117;
+	actionTable[81][LEFT_PARENTHESIS] = 92;
+	actionTable[81][MINUS] = 94;
+	actionTable[81][PLUS_PLUS] = 90;
+	actionTable[81][MINUS_MINUS] = 91;
+	actionTable[81][NOT] = 95;
+	actionTable[81][TRUE] = 101;
+	actionTable[81][FALSE] = 102;
+	actionTable[81][CHARACTER] = 103;
+	actionTable[81][STRINGVAL] = 104;
+	actionTable[81][NUMERAL] = 31;
+	actionTable[81][ID] = 22;
+	actionTable[81][E] = 112;
+	actionTable[81][L] = 85;
+	actionTable[81][R] = 86;
+	actionTable[81][Y] = 87;
+	actionTable[81][F] = 88;
+	actionTable[81][LV] = 89;
+	actionTable[81][TRU] = 96;
+	actionTable[81][FALS] = 97;
+	actionTable[81][CH] = 98;
+	actionTable[81][ST] = 99;
+	actionTable[81][NU] = 100;
+	actionTable[81][IDU] = 93;
 
 	//State: 82
-	actionTable[82][RIGHT_SQUARE] = -47;
-	actionTable[82][SEMI_COLON] = -47;
-	actionTable[82][RIGHT_PARENTHESIS] = -47;
-	actionTable[82][COMMA] = -47;
-	actionTable[82][AND] = -47;
-	actionTable[82][OR] = -47;
-	actionTable[82][LESS_THAN] = -47;
-	actionTable[82][GREATER_THAN] = -47;
-	actionTable[82][LESS_OR_EQUAL] = -47;
-	actionTable[82][GREATER_OR_EQUAL] = -47;
-	actionTable[82][EQUAL_EQUAL] = -47;
-	actionTable[82][EQUALS] = -47;
-	actionTable[82][PLUS] = -47;
-	actionTable[82][MINUS] = -47;
-	actionTable[82][TIMES] = 118;
-	actionTable[82][DIVIDE] = 119;
+	actionTable[82][LEFT_BRACES] = -32;
+	actionTable[82][RIGHT_BRACES] = -32;
+	actionTable[82][IF] = -32;
+	actionTable[82][ELSE] = -32;
+	actionTable[82][WHILE] = -32;
+	actionTable[82][DO] = -32;
+	actionTable[82][BREAK] = -32;
+	actionTable[82][CONTINUE] = -32;
+	actionTable[82][RETURN] = -32;
+	actionTable[82][ID] = -32;
 
 	//State: 83
-	actionTable[83][RIGHT_SQUARE] = -50;
-	actionTable[83][SEMI_COLON] = -50;
-	actionTable[83][RIGHT_PARENTHESIS] = -50;
-	actionTable[83][COMMA] = -50;
-	actionTable[83][AND] = -50;
-	actionTable[83][OR] = -50;
-	actionTable[83][LESS_THAN] = -50;
-	actionTable[83][GREATER_THAN] = -50;
-	actionTable[83][LESS_OR_EQUAL] = -50;
-	actionTable[83][GREATER_OR_EQUAL] = -50;
-	actionTable[83][EQUAL_EQUAL] = -50;
-	actionTable[83][EQUALS] = -50;
-	actionTable[83][PLUS] = -50;
-	actionTable[83][MINUS] = -50;
-	actionTable[83][TIMES] = -50;
-	actionTable[83][DIVIDE] = -50;
+	actionTable[83][LEFT_BRACES] = -33;
+	actionTable[83][RIGHT_BRACES] = -33;
+	actionTable[83][IF] = -33;
+	actionTable[83][ELSE] = -33;
+	actionTable[83][WHILE] = -33;
+	actionTable[83][DO] = -33;
+	actionTable[83][BREAK] = -33;
+	actionTable[83][CONTINUE] = -33;
+	actionTable[83][RETURN] = -33;
+	actionTable[83][ID] = -33;
 
 	//State: 84
-	actionTable[84][LEFT_SQUARE] = 76;
-	actionTable[84][RIGHT_SQUARE] = -51;
-	actionTable[84][SEMI_COLON] = -51;
-	actionTable[84][RIGHT_PARENTHESIS] = -51;
-	actionTable[84][COMMA] = -51;
-	actionTable[84][AND] = -51;
-	actionTable[84][OR] = -51;
-	actionTable[84][LESS_THAN] = -51;
-	actionTable[84][GREATER_THAN] = -51;
-	actionTable[84][LESS_OR_EQUAL] = -51;
-	actionTable[84][GREATER_OR_EQUAL] = -51;
-	actionTable[84][EQUAL_EQUAL] = -51;
-	actionTable[84][EQUALS] = -51;
-	actionTable[84][PLUS] = -51;
-	actionTable[84][MINUS] = -51;
-	actionTable[84][TIMES] = -51;
-	actionTable[84][DIVIDE] = -51;
-	actionTable[84][PLUS_PLUS] = 120;
-	actionTable[84][MINUS_MINUS] = 121;
-	actionTable[84][DOT] = 75;
+	actionTable[84][SEMI_COLON] = 113;
+	actionTable[84][AND] = 114;
+	actionTable[84][OR] = 115;
 
 	//State: 85
-	actionTable[85][ID] = 9;
-	actionTable[85][LV] = 122;
-	actionTable[85][IDT] = 66;
+	actionTable[85][RIGHT_SQUARE] = -37;
+	actionTable[85][SEMI_COLON] = -37;
+	actionTable[85][RIGHT_PARENTHESIS] = -37;
+	actionTable[85][COMMA] = -37;
+	actionTable[85][AND] = -37;
+	actionTable[85][OR] = -37;
+	actionTable[85][LESS_THAN] = 116;
+	actionTable[85][GREATER_THAN] = 117;
+	actionTable[85][LESS_OR_EQUAL] = 118;
+	actionTable[85][GREATER_OR_EQUAL] = 119;
+	actionTable[85][EQUAL_EQUAL] = 120;
+	actionTable[85][NOT_EQUAL] = 121;
 
 	//State: 86
-	actionTable[86][ID] = 9;
-	actionTable[86][LV] = 123;
-	actionTable[86][IDT] = 66;
+	actionTable[86][RIGHT_SQUARE] = -44;
+	actionTable[86][SEMI_COLON] = -44;
+	actionTable[86][RIGHT_PARENTHESIS] = -44;
+	actionTable[86][COMMA] = -44;
+	actionTable[86][AND] = -44;
+	actionTable[86][OR] = -44;
+	actionTable[86][LESS_THAN] = -44;
+	actionTable[86][GREATER_THAN] = -44;
+	actionTable[86][LESS_OR_EQUAL] = -44;
+	actionTable[86][GREATER_OR_EQUAL] = -44;
+	actionTable[86][EQUAL_EQUAL] = -44;
+	actionTable[86][NOT_EQUAL] = -44;
+	actionTable[86][PLUS] = 122;
+	actionTable[86][MINUS] = 123;
 
 	//State: 87
-	actionTable[87][LEFT_PARENTHESIS] = 87;
-	actionTable[87][MINUS] = 89;
-	actionTable[87][PLUS_PLUS] = 85;
-	actionTable[87][MINUS_MINUS] = 86;
-	actionTable[87][NOT] = 90;
-	actionTable[87][ID] = 9;
-	actionTable[87][TRUE] = 96;
-	actionTable[87][FALSE] = 97;
-	actionTable[87][CHARACTER] = 98;
-	actionTable[87][STRINGVAL] = 99;
-	actionTable[87][NUMERAL] = 32;
-	actionTable[87][E] = 124;
-	actionTable[87][L] = 80;
-	actionTable[87][R] = 81;
-	actionTable[87][Y] = 82;
-	actionTable[87][F] = 83;
-	actionTable[87][LV] = 84;
-	actionTable[87][IDT] = 88;
-	actionTable[87][TRU] = 91;
-	actionTable[87][FALS] = 92;
-	actionTable[87][CH] = 93;
-	actionTable[87][ST] = 94;
-	actionTable[87][NU] = 95
-	;
+	actionTable[87][RIGHT_SQUARE] = -47;
+	actionTable[87][SEMI_COLON] = -47;
+	actionTable[87][RIGHT_PARENTHESIS] = -47;
+	actionTable[87][COMMA] = -47;
+	actionTable[87][AND] = -47;
+	actionTable[87][OR] = -47;
+	actionTable[87][LESS_THAN] = -47;
+	actionTable[87][GREATER_THAN] = -47;
+	actionTable[87][LESS_OR_EQUAL] = -47;
+	actionTable[87][GREATER_OR_EQUAL] = -47;
+	actionTable[87][EQUAL_EQUAL] = -47;
+	actionTable[87][NOT_EQUAL] = -47;
+	actionTable[87][PLUS] = -47;
+	actionTable[87][MINUS] = -47;
+	actionTable[87][TIMES] = 124;
+	actionTable[87][DIVIDE] = 125;
 
 	//State: 88
-	actionTable[88][LEFT_SQUARE] = -69;
-	actionTable[88][RIGHT_SQUARE] = -69;
-	actionTable[88][SEMI_COLON] = -69;
-	actionTable[88][LEFT_PARENTHESIS] = 125;
-	actionTable[88][RIGHT_PARENTHESIS] = -69;
-	actionTable[88][COMMA] = -69;
-	actionTable[88][AND] = -69;
-	actionTable[88][OR] = -69;
-	actionTable[88][LESS_THAN] = -69;
-	actionTable[88][GREATER_THAN] = -69;
-	actionTable[88][LESS_OR_EQUAL] = -69;
-	actionTable[88][GREATER_OR_EQUAL] = -69;
-	actionTable[88][EQUAL_EQUAL] = -69;
-	actionTable[88][EQUALS] = -69;
-	actionTable[88][PLUS] = -69;
-	actionTable[88][MINUS] = -69;
-	actionTable[88][TIMES] = -69;
-	actionTable[88][DIVIDE] = -69;
-	actionTable[88][PLUS_PLUS] = -69;
-	actionTable[88][MINUS_MINUS] = -69;
-	actionTable[88][DOT] = -69;
+	actionTable[88][RIGHT_SQUARE] = -50;
+	actionTable[88][SEMI_COLON] = -50;
+	actionTable[88][RIGHT_PARENTHESIS] = -50;
+	actionTable[88][COMMA] = -50;
+	actionTable[88][AND] = -50;
+	actionTable[88][OR] = -50;
+	actionTable[88][LESS_THAN] = -50;
+	actionTable[88][GREATER_THAN] = -50;
+	actionTable[88][LESS_OR_EQUAL] = -50;
+	actionTable[88][GREATER_OR_EQUAL] = -50;
+	actionTable[88][EQUAL_EQUAL] = -50;
+	actionTable[88][NOT_EQUAL] = -50;
+	actionTable[88][PLUS] = -50;
+	actionTable[88][MINUS] = -50;
+	actionTable[88][TIMES] = -50;
+	actionTable[88][DIVIDE] = -50;
 
 	//State: 89
-	actionTable[89][LEFT_PARENTHESIS] = 87;
-	actionTable[89][MINUS] = 89;
-	actionTable[89][PLUS_PLUS] = 85;
-	actionTable[89][MINUS_MINUS] = 86;
-	actionTable[89][NOT] = 90;
-	actionTable[89][ID] = 9;
-	actionTable[89][TRUE] = 96;
-	actionTable[89][FALSE] = 97;
-	actionTable[89][CHARACTER] = 98;
-	actionTable[89][STRINGVAL] = 99;
-	actionTable[89][NUMERAL] = 32;
-	actionTable[89][F] = 126;
-	actionTable[89][LV] = 84;
-	actionTable[89][IDT] = 88;
-	actionTable[89][TRU] = 91;
-	actionTable[89][FALS] = 92;
-	actionTable[89][CH] = 93;
-	actionTable[89][ST] = 94;
-	actionTable[89][NU] = 95
-	;
+	actionTable[89][LEFT_SQUARE] = 81;
+	actionTable[89][RIGHT_SQUARE] = -51;
+	actionTable[89][SEMI_COLON] = -51;
+	actionTable[89][RIGHT_PARENTHESIS] = -51;
+	actionTable[89][COMMA] = -51;
+	actionTable[89][AND] = -51;
+	actionTable[89][OR] = -51;
+	actionTable[89][LESS_THAN] = -51;
+	actionTable[89][GREATER_THAN] = -51;
+	actionTable[89][LESS_OR_EQUAL] = -51;
+	actionTable[89][GREATER_OR_EQUAL] = -51;
+	actionTable[89][EQUAL_EQUAL] = -51;
+	actionTable[89][NOT_EQUAL] = -51;
+	actionTable[89][PLUS] = -51;
+	actionTable[89][MINUS] = -51;
+	actionTable[89][TIMES] = -51;
+	actionTable[89][DIVIDE] = -51;
+	actionTable[89][PLUS_PLUS] = 126;
+	actionTable[89][MINUS_MINUS] = 127;
+	actionTable[89][DOT] = 80;
 
 	//State: 90
-	actionTable[90][LEFT_PARENTHESIS] = 87;
-	actionTable[90][MINUS] = 89;
-	actionTable[90][PLUS_PLUS] = 85;
-	actionTable[90][MINUS_MINUS] = 86;
-	actionTable[90][NOT] = 90;
-	actionTable[90][ID] = 9;
-	actionTable[90][TRUE] = 96;
-	actionTable[90][FALSE] = 97;
-	actionTable[90][CHARACTER] = 98;
-	actionTable[90][STRINGVAL] = 99;
-	actionTable[90][NUMERAL] = 32;
-	actionTable[90][F] = 127;
-	actionTable[90][LV] = 84;
-	actionTable[90][IDT] = 88;
-	actionTable[90][TRU] = 91;
-	actionTable[90][FALS] = 92;
-	actionTable[90][CH] = 93;
-	actionTable[90][ST] = 94;
-	actionTable[90][NU] = 95
-	;
+	actionTable[90][ID] = 22;
+	actionTable[90][LV] = 128;
+	actionTable[90][IDU] = 71;
 
 	//State: 91
-	actionTable[91][RIGHT_SQUARE] = -60;
-	actionTable[91][SEMI_COLON] = -60;
-	actionTable[91][RIGHT_PARENTHESIS] = -60;
-	actionTable[91][COMMA] = -60;
-	actionTable[91][AND] = -60;
-	actionTable[91][OR] = -60;
-	actionTable[91][LESS_THAN] = -60;
-	actionTable[91][GREATER_THAN] = -60;
-	actionTable[91][LESS_OR_EQUAL] = -60;
-	actionTable[91][GREATER_OR_EQUAL] = -60;
-	actionTable[91][EQUAL_EQUAL] = -60;
-	actionTable[91][EQUALS] = -60;
-	actionTable[91][PLUS] = -60;
-	actionTable[91][MINUS] = -60;
-	actionTable[91][TIMES] = -60;
-	actionTable[91][DIVIDE] = -60;
+	actionTable[91][ID] = 22;
+	actionTable[91][LV] = 129;
+	actionTable[91][IDU] = 71;
 
 	//State: 92
-	actionTable[92][RIGHT_SQUARE] = -61;
-	actionTable[92][SEMI_COLON] = -61;
-	actionTable[92][RIGHT_PARENTHESIS] = -61;
-	actionTable[92][COMMA] = -61;
-	actionTable[92][AND] = -61;
-	actionTable[92][OR] = -61;
-	actionTable[92][LESS_THAN] = -61;
-	actionTable[92][GREATER_THAN] = -61;
-	actionTable[92][LESS_OR_EQUAL] = -61;
-	actionTable[92][GREATER_OR_EQUAL] = -61;
-	actionTable[92][EQUAL_EQUAL] = -61;
-	actionTable[92][EQUALS] = -61;
-	actionTable[92][PLUS] = -61;
-	actionTable[92][MINUS] = -61;
-	actionTable[92][TIMES] = -61;
-	actionTable[92][DIVIDE] = -61;
+	actionTable[92][LEFT_PARENTHESIS] = 92;
+	actionTable[92][MINUS] = 94;
+	actionTable[92][PLUS_PLUS] = 90;
+	actionTable[92][MINUS_MINUS] = 91;
+	actionTable[92][NOT] = 95;
+	actionTable[92][TRUE] = 101;
+	actionTable[92][FALSE] = 102;
+	actionTable[92][CHARACTER] = 103;
+	actionTable[92][STRINGVAL] = 104;
+	actionTable[92][NUMERAL] = 31;
+	actionTable[92][ID] = 22;
+	actionTable[92][E] = 130;
+	actionTable[92][L] = 85;
+	actionTable[92][R] = 86;
+	actionTable[92][Y] = 87;
+	actionTable[92][F] = 88;
+	actionTable[92][LV] = 89;
+	actionTable[92][TRU] = 96;
+	actionTable[92][FALS] = 97;
+	actionTable[92][CH] = 98;
+	actionTable[92][ST] = 99;
+	actionTable[92][NU] = 100;
+	actionTable[92][IDU] = 93;
 
 	//State: 93
-	actionTable[93][RIGHT_SQUARE] = -62;
-	actionTable[93][SEMI_COLON] = -62;
-	actionTable[93][RIGHT_PARENTHESIS] = -62;
-	actionTable[93][COMMA] = -62;
-	actionTable[93][AND] = -62;
-	actionTable[93][OR] = -62;
-	actionTable[93][LESS_THAN] = -62;
-	actionTable[93][GREATER_THAN] = -62;
-	actionTable[93][LESS_OR_EQUAL] = -62;
-	actionTable[93][GREATER_OR_EQUAL] = -62;
-	actionTable[93][EQUAL_EQUAL] = -62;
-	actionTable[93][EQUALS] = -62;
-	actionTable[93][PLUS] = -62;
-	actionTable[93][MINUS] = -62;
-	actionTable[93][TIMES] = -62;
-	actionTable[93][DIVIDE] = -62;
+	actionTable[93][LEFT_SQUARE] = -69;
+	actionTable[93][RIGHT_SQUARE] = -69;
+	actionTable[93][SEMI_COLON] = -69;
+	actionTable[93][LEFT_PARENTHESIS] = -82;
+	actionTable[93][RIGHT_PARENTHESIS] = -69;
+	actionTable[93][COMMA] = -69;
+	actionTable[93][AND] = -69;
+	actionTable[93][OR] = -69;
+	actionTable[93][LESS_THAN] = -69;
+	actionTable[93][GREATER_THAN] = -69;
+	actionTable[93][LESS_OR_EQUAL] = -69;
+	actionTable[93][GREATER_OR_EQUAL] = -69;
+	actionTable[93][EQUAL_EQUAL] = -69;
+	actionTable[93][NOT_EQUAL] = -69;
+	actionTable[93][PLUS] = -69;
+	actionTable[93][MINUS] = -69;
+	actionTable[93][TIMES] = -69;
+	actionTable[93][DIVIDE] = -69;
+	actionTable[93][PLUS_PLUS] = -69;
+	actionTable[93][MINUS_MINUS] = -69;
+	actionTable[93][DOT] = -69;
+	actionTable[93][MC] = 131;
 
 	//State: 94
-	actionTable[94][RIGHT_SQUARE] = -63;
-	actionTable[94][SEMI_COLON] = -63;
-	actionTable[94][RIGHT_PARENTHESIS] = -63;
-	actionTable[94][COMMA] = -63;
-	actionTable[94][AND] = -63;
-	actionTable[94][OR] = -63;
-	actionTable[94][LESS_THAN] = -63;
-	actionTable[94][GREATER_THAN] = -63;
-	actionTable[94][LESS_OR_EQUAL] = -63;
-	actionTable[94][GREATER_OR_EQUAL] = -63;
-	actionTable[94][EQUAL_EQUAL] = -63;
-	actionTable[94][EQUALS] = -63;
-	actionTable[94][PLUS] = -63;
-	actionTable[94][MINUS] = -63;
-	actionTable[94][TIMES] = -63;
-	actionTable[94][DIVIDE] = -63;
+	actionTable[94][LEFT_PARENTHESIS] = 92;
+	actionTable[94][MINUS] = 94;
+	actionTable[94][PLUS_PLUS] = 90;
+	actionTable[94][MINUS_MINUS] = 91;
+	actionTable[94][NOT] = 95;
+	actionTable[94][TRUE] = 101;
+	actionTable[94][FALSE] = 102;
+	actionTable[94][CHARACTER] = 103;
+	actionTable[94][STRINGVAL] = 104;
+	actionTable[94][NUMERAL] = 31;
+	actionTable[94][ID] = 22;
+	actionTable[94][F] = 132;
+	actionTable[94][LV] = 89;
+	actionTable[94][TRU] = 96;
+	actionTable[94][FALS] = 97;
+	actionTable[94][CH] = 98;
+	actionTable[94][ST] = 99;
+	actionTable[94][NU] = 100;
+	actionTable[94][IDU] = 93;
 
 	//State: 95
-	actionTable[95][RIGHT_SQUARE] = -64;
-	actionTable[95][SEMI_COLON] = -64;
-	actionTable[95][RIGHT_PARENTHESIS] = -64;
-	actionTable[95][COMMA] = -64;
-	actionTable[95][AND] = -64;
-	actionTable[95][OR] = -64;
-	actionTable[95][LESS_THAN] = -64;
-	actionTable[95][GREATER_THAN] = -64;
-	actionTable[95][LESS_OR_EQUAL] = -64;
-	actionTable[95][GREATER_OR_EQUAL] = -64;
-	actionTable[95][EQUAL_EQUAL] = -64;
-	actionTable[95][EQUALS] = -64;
-	actionTable[95][PLUS] = -64;
-	actionTable[95][MINUS] = -64;
-	actionTable[95][TIMES] = -64;
-	actionTable[95][DIVIDE] = -64;
+	actionTable[95][LEFT_PARENTHESIS] = 92;
+	actionTable[95][MINUS] = 94;
+	actionTable[95][PLUS_PLUS] = 90;
+	actionTable[95][MINUS_MINUS] = 91;
+	actionTable[95][NOT] = 95;
+	actionTable[95][TRUE] = 101;
+	actionTable[95][FALSE] = 102;
+	actionTable[95][CHARACTER] = 103;
+	actionTable[95][STRINGVAL] = 104;
+	actionTable[95][NUMERAL] = 31;
+	actionTable[95][ID] = 22;
+	actionTable[95][F] = 133;
+	actionTable[95][LV] = 89;
+	actionTable[95][TRU] = 96;
+	actionTable[95][FALS] = 97;
+	actionTable[95][CH] = 98;
+	actionTable[95][ST] = 99;
+	actionTable[95][NU] = 100;
+	actionTable[95][IDU] = 93;
 
 	//State: 96
-	actionTable[96][RIGHT_SQUARE] = -71;
-	actionTable[96][SEMI_COLON] = -71;
-	actionTable[96][RIGHT_PARENTHESIS] = -71;
-	actionTable[96][COMMA] = -71;
-	actionTable[96][AND] = -71;
-	actionTable[96][OR] = -71;
-	actionTable[96][LESS_THAN] = -71;
-	actionTable[96][GREATER_THAN] = -71;
-	actionTable[96][LESS_OR_EQUAL] = -71;
-	actionTable[96][GREATER_OR_EQUAL] = -71;
-	actionTable[96][EQUAL_EQUAL] = -71;
-	actionTable[96][EQUALS] = -71;
-	actionTable[96][PLUS] = -71;
-	actionTable[96][MINUS] = -71;
-	actionTable[96][TIMES] = -71;
-	actionTable[96][DIVIDE] = -71;
+	actionTable[96][RIGHT_SQUARE] = -60;
+	actionTable[96][SEMI_COLON] = -60;
+	actionTable[96][RIGHT_PARENTHESIS] = -60;
+	actionTable[96][COMMA] = -60;
+	actionTable[96][AND] = -60;
+	actionTable[96][OR] = -60;
+	actionTable[96][LESS_THAN] = -60;
+	actionTable[96][GREATER_THAN] = -60;
+	actionTable[96][LESS_OR_EQUAL] = -60;
+	actionTable[96][GREATER_OR_EQUAL] = -60;
+	actionTable[96][EQUAL_EQUAL] = -60;
+	actionTable[96][NOT_EQUAL] = -60;
+	actionTable[96][PLUS] = -60;
+	actionTable[96][MINUS] = -60;
+	actionTable[96][TIMES] = -60;
+	actionTable[96][DIVIDE] = -60;
 
 	//State: 97
-	actionTable[97][RIGHT_SQUARE] = -72;
-	actionTable[97][SEMI_COLON] = -72;
-	actionTable[97][RIGHT_PARENTHESIS] = -72;
-	actionTable[97][COMMA] = -72;
-	actionTable[97][AND] = -72;
-	actionTable[97][OR] = -72;
-	actionTable[97][LESS_THAN] = -72;
-	actionTable[97][GREATER_THAN] = -72;
-	actionTable[97][LESS_OR_EQUAL] = -72;
-	actionTable[97][GREATER_OR_EQUAL] = -72;
-	actionTable[97][EQUAL_EQUAL] = -72;
-	actionTable[97][EQUALS] = -72;
-	actionTable[97][PLUS] = -72;
-	actionTable[97][MINUS] = -72;
-	actionTable[97][TIMES] = -72;
-	actionTable[97][DIVIDE] = -72;
+	actionTable[97][RIGHT_SQUARE] = -61;
+	actionTable[97][SEMI_COLON] = -61;
+	actionTable[97][RIGHT_PARENTHESIS] = -61;
+	actionTable[97][COMMA] = -61;
+	actionTable[97][AND] = -61;
+	actionTable[97][OR] = -61;
+	actionTable[97][LESS_THAN] = -61;
+	actionTable[97][GREATER_THAN] = -61;
+	actionTable[97][LESS_OR_EQUAL] = -61;
+	actionTable[97][GREATER_OR_EQUAL] = -61;
+	actionTable[97][EQUAL_EQUAL] = -61;
+	actionTable[97][NOT_EQUAL] = -61;
+	actionTable[97][PLUS] = -61;
+	actionTable[97][MINUS] = -61;
+	actionTable[97][TIMES] = -61;
+	actionTable[97][DIVIDE] = -61;
 
 	//State: 98
-	actionTable[98][RIGHT_SQUARE] = -73;
-	actionTable[98][SEMI_COLON] = -73;
-	actionTable[98][RIGHT_PARENTHESIS] = -73;
-	actionTable[98][COMMA] = -73;
-	actionTable[98][AND] = -73;
-	actionTable[98][OR] = -73;
-	actionTable[98][LESS_THAN] = -73;
-	actionTable[98][GREATER_THAN] = -73;
-	actionTable[98][LESS_OR_EQUAL] = -73;
-	actionTable[98][GREATER_OR_EQUAL] = -73;
-	actionTable[98][EQUAL_EQUAL] = -73;
-	actionTable[98][EQUALS] = -73;
-	actionTable[98][PLUS] = -73;
-	actionTable[98][MINUS] = -73;
-	actionTable[98][TIMES] = -73;
-	actionTable[98][DIVIDE] = -73;
+	actionTable[98][RIGHT_SQUARE] = -62;
+	actionTable[98][SEMI_COLON] = -62;
+	actionTable[98][RIGHT_PARENTHESIS] = -62;
+	actionTable[98][COMMA] = -62;
+	actionTable[98][AND] = -62;
+	actionTable[98][OR] = -62;
+	actionTable[98][LESS_THAN] = -62;
+	actionTable[98][GREATER_THAN] = -62;
+	actionTable[98][LESS_OR_EQUAL] = -62;
+	actionTable[98][GREATER_OR_EQUAL] = -62;
+	actionTable[98][EQUAL_EQUAL] = -62;
+	actionTable[98][NOT_EQUAL] = -62;
+	actionTable[98][PLUS] = -62;
+	actionTable[98][MINUS] = -62;
+	actionTable[98][TIMES] = -62;
+	actionTable[98][DIVIDE] = -62;
 
 	//State: 99
-	actionTable[99][RIGHT_SQUARE] = -74;
-	actionTable[99][SEMI_COLON] = -74;
-	actionTable[99][RIGHT_PARENTHESIS] = -74;
-	actionTable[99][COMMA] = -74;
-	actionTable[99][AND] = -74;
-	actionTable[99][OR] = -74;
-	actionTable[99][LESS_THAN] = -74;
-	actionTable[99][GREATER_THAN] = -74;
-	actionTable[99][LESS_OR_EQUAL] = -74;
-	actionTable[99][GREATER_OR_EQUAL] = -74;
-	actionTable[99][EQUAL_EQUAL] = -74;
-	actionTable[99][EQUALS] = -74;
-	actionTable[99][PLUS] = -74;
-	actionTable[99][MINUS] = -74;
-	actionTable[99][TIMES] = -74;
-	actionTable[99][DIVIDE] = -74;
+	actionTable[99][RIGHT_SQUARE] = -63;
+	actionTable[99][SEMI_COLON] = -63;
+	actionTable[99][RIGHT_PARENTHESIS] = -63;
+	actionTable[99][COMMA] = -63;
+	actionTable[99][AND] = -63;
+	actionTable[99][OR] = -63;
+	actionTable[99][LESS_THAN] = -63;
+	actionTable[99][GREATER_THAN] = -63;
+	actionTable[99][LESS_OR_EQUAL] = -63;
+	actionTable[99][GREATER_OR_EQUAL] = -63;
+	actionTable[99][EQUAL_EQUAL] = -63;
+	actionTable[99][NOT_EQUAL] = -63;
+	actionTable[99][PLUS] = -63;
+	actionTable[99][MINUS] = -63;
+	actionTable[99][TIMES] = -63;
+	actionTable[99][DIVIDE] = -63;
 
 	//State: 100
-	actionTable[100][INTEGER] = 18;
-	actionTable[100][CHAR] = 19;
-	actionTable[100][BOOLEAN] = 20;
-	actionTable[100][STRING] = 21;
-	actionTable[100][ID] = 9;
-	actionTable[100][T] = 128;
-	actionTable[100][IDT] = 22;
+	actionTable[100][RIGHT_SQUARE] = -64;
+	actionTable[100][SEMI_COLON] = -64;
+	actionTable[100][RIGHT_PARENTHESIS] = -64;
+	actionTable[100][COMMA] = -64;
+	actionTable[100][AND] = -64;
+	actionTable[100][OR] = -64;
+	actionTable[100][LESS_THAN] = -64;
+	actionTable[100][GREATER_THAN] = -64;
+	actionTable[100][LESS_OR_EQUAL] = -64;
+	actionTable[100][GREATER_OR_EQUAL] = -64;
+	actionTable[100][EQUAL_EQUAL] = -64;
+	actionTable[100][NOT_EQUAL] = -64;
+	actionTable[100][PLUS] = -64;
+	actionTable[100][MINUS] = -64;
+	actionTable[100][TIMES] = -64;
+	actionTable[100][DIVIDE] = -64;
 
 	//State: 101
-	actionTable[101][RIGHT_PARENTHESIS] = 129;
-	actionTable[101][AND] = 108;
-	actionTable[101][OR] = 109;
+	actionTable[101][RIGHT_SQUARE] = -70;
+	actionTable[101][SEMI_COLON] = -70;
+	actionTable[101][RIGHT_PARENTHESIS] = -70;
+	actionTable[101][COMMA] = -70;
+	actionTable[101][AND] = -70;
+	actionTable[101][OR] = -70;
+	actionTable[101][LESS_THAN] = -70;
+	actionTable[101][GREATER_THAN] = -70;
+	actionTable[101][LESS_OR_EQUAL] = -70;
+	actionTable[101][GREATER_OR_EQUAL] = -70;
+	actionTable[101][EQUAL_EQUAL] = -70;
+	actionTable[101][NOT_EQUAL] = -70;
+	actionTable[101][PLUS] = -70;
+	actionTable[101][MINUS] = -70;
+	actionTable[101][TIMES] = -70;
+	actionTable[101][DIVIDE] = -70;
 
 	//State: 102
-	actionTable[102][RIGHT_PARENTHESIS] = 130;
-	actionTable[102][AND] = 108;
-	actionTable[102][OR] = 109;
+	actionTable[102][RIGHT_SQUARE] = -71;
+	actionTable[102][SEMI_COLON] = -71;
+	actionTable[102][RIGHT_PARENTHESIS] = -71;
+	actionTable[102][COMMA] = -71;
+	actionTable[102][AND] = -71;
+	actionTable[102][OR] = -71;
+	actionTable[102][LESS_THAN] = -71;
+	actionTable[102][GREATER_THAN] = -71;
+	actionTable[102][LESS_OR_EQUAL] = -71;
+	actionTable[102][GREATER_OR_EQUAL] = -71;
+	actionTable[102][EQUAL_EQUAL] = -71;
+	actionTable[102][NOT_EQUAL] = -71;
+	actionTable[102][PLUS] = -71;
+	actionTable[102][MINUS] = -71;
+	actionTable[102][TIMES] = -71;
+	actionTable[102][DIVIDE] = -71;
 
 	//State: 103
-	actionTable[103][LEFT_PARENTHESIS] = 131;
+	actionTable[103][RIGHT_SQUARE] = -72;
+	actionTable[103][SEMI_COLON] = -72;
+	actionTable[103][RIGHT_PARENTHESIS] = -72;
+	actionTable[103][COMMA] = -72;
+	actionTable[103][AND] = -72;
+	actionTable[103][OR] = -72;
+	actionTable[103][LESS_THAN] = -72;
+	actionTable[103][GREATER_THAN] = -72;
+	actionTable[103][LESS_OR_EQUAL] = -72;
+	actionTable[103][GREATER_OR_EQUAL] = -72;
+	actionTable[103][EQUAL_EQUAL] = -72;
+	actionTable[103][NOT_EQUAL] = -72;
+	actionTable[103][PLUS] = -72;
+	actionTable[103][MINUS] = -72;
+	actionTable[103][TIMES] = -72;
+	actionTable[103][DIVIDE] = -72;
 
 	//State: 104
-	actionTable[104][SEMI_COLON] = 132;
-	actionTable[104][AND] = 108;
-	actionTable[104][OR] = 109;
+	actionTable[104][RIGHT_SQUARE] = -73;
+	actionTable[104][SEMI_COLON] = -73;
+	actionTable[104][RIGHT_PARENTHESIS] = -73;
+	actionTable[104][COMMA] = -73;
+	actionTable[104][AND] = -73;
+	actionTable[104][OR] = -73;
+	actionTable[104][LESS_THAN] = -73;
+	actionTable[104][GREATER_THAN] = -73;
+	actionTable[104][LESS_OR_EQUAL] = -73;
+	actionTable[104][GREATER_OR_EQUAL] = -73;
+	actionTable[104][EQUAL_EQUAL] = -73;
+	actionTable[104][NOT_EQUAL] = -73;
+	actionTable[104][PLUS] = -73;
+	actionTable[104][MINUS] = -73;
+	actionTable[104][TIMES] = -73;
+	actionTable[104][DIVIDE] = -73;
 
 	//State: 105
-	actionTable[105][EQUALS] = -67;
-	actionTable[105][LEFT_SQUARE] = -67;
-	actionTable[105][RIGHT_SQUARE] = -67;
-	actionTable[105][SEMI_COLON] = -67;
-	actionTable[105][RIGHT_PARENTHESIS] = -67;
-	actionTable[105][COMMA] = -67;
-	actionTable[105][AND] = -67;
-	actionTable[105][OR] = -67;
-	actionTable[105][LESS_THAN] = -67;
-	actionTable[105][GREATER_THAN] = -67;
-	actionTable[105][LESS_OR_EQUAL] = -67;
-	actionTable[105][GREATER_OR_EQUAL] = -67;
-	actionTable[105][EQUAL_EQUAL] = -67;
-	actionTable[105][EQUALS] = -67;
-	actionTable[105][PLUS] = -67;
-	actionTable[105][MINUS] = -67;
-	actionTable[105][TIMES] = -67;
-	actionTable[105][DIVIDE] = -67;
-	actionTable[105][PLUS_PLUS] = -67;
-	actionTable[105][MINUS_MINUS] = -67;
-	actionTable[105][DOT] = -67;
+	actionTable[105][INTEGER] = 17;
+	actionTable[105][CHAR] = 18;
+	actionTable[105][BOOLEAN] = 19;
+	actionTable[105][STRING] = 20;
+	actionTable[105][ID] = 22;
+	actionTable[105][T] = 134;
+	actionTable[105][IDU] = 21;
 
 	//State: 106
-	actionTable[106][RIGHT_SQUARE] = 133;
-	actionTable[106][AND] = 108;
-	actionTable[106][OR] = 109;
+	actionTable[106][RIGHT_PARENTHESIS] = 135;
+	actionTable[106][AND] = 114;
+	actionTable[106][OR] = 115;
 
 	//State: 107
-	actionTable[107][LEFT_BRACES] = -34;
-	actionTable[107][RIGHT_BRACES] = -34;
-	actionTable[107][IF] = -34;
-	actionTable[107][ELSE] = -34;
-	actionTable[107][WHILE] = -34;
-	actionTable[107][DO] = -34;
-	actionTable[107][BREAK] = -34;
-	actionTable[107][CONTINUE] = -34;
-	actionTable[107][RETURN] = -34;
-	actionTable[107][ID] = -34;
+	actionTable[107][LEFT_PARENTHESIS] = 92;
+	actionTable[107][MINUS] = 94;
+	actionTable[107][PLUS_PLUS] = 90;
+	actionTable[107][MINUS_MINUS] = 91;
+	actionTable[107][NOT] = 95;
+	actionTable[107][TRUE] = 101;
+	actionTable[107][FALSE] = 102;
+	actionTable[107][CHARACTER] = 103;
+	actionTable[107][STRINGVAL] = 104;
+	actionTable[107][NUMERAL] = 31;
+	actionTable[107][ID] = 22;
+	actionTable[107][E] = 136;
+	actionTable[107][L] = 85;
+	actionTable[107][R] = 86;
+	actionTable[107][Y] = 87;
+	actionTable[107][F] = 88;
+	actionTable[107][LV] = 89;
+	actionTable[107][TRU] = 96;
+	actionTable[107][FALS] = 97;
+	actionTable[107][CH] = 98;
+	actionTable[107][ST] = 99;
+	actionTable[107][NU] = 100;
+	actionTable[107][IDU] = 93;
 
 	//State: 108
-	actionTable[108][LEFT_PARENTHESIS] = 87;
-	actionTable[108][MINUS] = 89;
-	actionTable[108][PLUS_PLUS] = 85;
-	actionTable[108][MINUS_MINUS] = 86;
-	actionTable[108][NOT] = 90;
-	actionTable[108][ID] = 9;
-	actionTable[108][TRUE] = 96;
-	actionTable[108][FALSE] = 97;
-	actionTable[108][CHARACTER] = 98;
-	actionTable[108][STRINGVAL] = 99;
-	actionTable[108][NUMERAL] = 32;
-	actionTable[108][L] = 134;
-	actionTable[108][R] = 81;
-	actionTable[108][Y] = 82;
-	actionTable[108][F] = 83;
-	actionTable[108][LV] = 84;
-	actionTable[108][IDT] = 88;
-	actionTable[108][TRU] = 91;
-	actionTable[108][FALS] = 92;
-	actionTable[108][CH] = 93;
-	actionTable[108][ST] = 94;
-	actionTable[108][NU] = 95
-	;
+	actionTable[108][WHILE] = 137;
 
 	//State: 109
-	actionTable[109][LEFT_PARENTHESIS] = 87;
-	actionTable[109][MINUS] = 89;
-	actionTable[109][PLUS_PLUS] = 85;
-	actionTable[109][MINUS_MINUS] = 86;
-	actionTable[109][NOT] = 90;
-	actionTable[109][ID] = 9;
-	actionTable[109][TRUE] = 96;
-	actionTable[109][FALSE] = 97;
-	actionTable[109][CHARACTER] = 98;
-	actionTable[109][STRINGVAL] = 99;
-	actionTable[109][NUMERAL] = 32;
-	actionTable[109][L] = 135;
-	actionTable[109][R] = 81;
-	actionTable[109][Y] = 82;
-	actionTable[109][F] = 83;
-	actionTable[109][LV] = 84;
-	actionTable[109][IDT] = 88;
-	actionTable[109][TRU] = 91;
-	actionTable[109][FALS] = 92;
-	actionTable[109][CH] = 93;
-	actionTable[109][ST] = 94;
-	actionTable[109][NU] = 95
-	;
+	actionTable[109][LEFT_PARENTHESIS] = 92;
+	actionTable[109][MINUS] = 94;
+	actionTable[109][PLUS_PLUS] = 90;
+	actionTable[109][MINUS_MINUS] = 91;
+	actionTable[109][NOT] = 95;
+	actionTable[109][TRUE] = 101;
+	actionTable[109][FALSE] = 102;
+	actionTable[109][CHARACTER] = 103;
+	actionTable[109][STRINGVAL] = 104;
+	actionTable[109][NUMERAL] = 31;
+	actionTable[109][ID] = 22;
+	actionTable[109][E] = 138;
+	actionTable[109][L] = 85;
+	actionTable[109][R] = 86;
+	actionTable[109][Y] = 87;
+	actionTable[109][F] = 88;
+	actionTable[109][LV] = 89;
+	actionTable[109][TRU] = 96;
+	actionTable[109][FALS] = 97;
+	actionTable[109][CH] = 98;
+	actionTable[109][ST] = 99;
+	actionTable[109][NU] = 100;
+	actionTable[109][IDU] = 93;
 
 	//State: 110
-	actionTable[110][LEFT_PARENTHESIS] = 87;
-	actionTable[110][MINUS] = 89;
-	actionTable[110][PLUS_PLUS] = 85;
-	actionTable[110][MINUS_MINUS] = 86;
-	actionTable[110][NOT] = 90;
-	actionTable[110][ID] = 9;
-	actionTable[110][TRUE] = 96;
-	actionTable[110][FALSE] = 97;
-	actionTable[110][CHARACTER] = 98;
-	actionTable[110][STRINGVAL] = 99;
-	actionTable[110][NUMERAL] = 32;
-	actionTable[110][R] = 136;
-	actionTable[110][Y] = 82;
-	actionTable[110][F] = 83;
-	actionTable[110][LV] = 84;
-	actionTable[110][IDT] = 88;
-	actionTable[110][TRU] = 91;
-	actionTable[110][FALS] = 92;
-	actionTable[110][CH] = 93;
-	actionTable[110][ST] = 94;
-	actionTable[110][NU] = 95
-	;
+	actionTable[110][EQUALS] = -67;
+	actionTable[110][LEFT_SQUARE] = -67;
+	actionTable[110][RIGHT_SQUARE] = -67;
+	actionTable[110][LEFT_BRACES] = -67;
+	actionTable[110][RIGHT_BRACES] = -67;
+	actionTable[110][SEMI_COLON] = -67;
+	actionTable[110][RIGHT_PARENTHESIS] = -67;
+	actionTable[110][COMMA] = -67;
+	actionTable[110][IF] = -67;
+	actionTable[110][ELSE] = -67;
+	actionTable[110][WHILE] = -67;
+	actionTable[110][DO] = -67;
+	actionTable[110][BREAK] = -67;
+	actionTable[110][CONTINUE] = -67;
+	actionTable[110][RETURN] = -67;
+	actionTable[110][AND] = -67;
+	actionTable[110][OR] = -67;
+	actionTable[110][LESS_THAN] = -67;
+	actionTable[110][GREATER_THAN] = -67;
+	actionTable[110][LESS_OR_EQUAL] = -67;
+	actionTable[110][GREATER_OR_EQUAL] = -67;
+	actionTable[110][EQUAL_EQUAL] = -67;
+	actionTable[110][NOT_EQUAL] = -67;
+	actionTable[110][PLUS] = -67;
+	actionTable[110][MINUS] = -67;
+	actionTable[110][TIMES] = -67;
+	actionTable[110][DIVIDE] = -67;
+	actionTable[110][PLUS_PLUS] = -67;
+	actionTable[110][MINUS_MINUS] = -67;
+	actionTable[110][DOT] = -67;
+	actionTable[110][ID] = -67;
 
 	//State: 111
-	actionTable[111][LEFT_PARENTHESIS] = 87;
-	actionTable[111][MINUS] = 89;
-	actionTable[111][PLUS_PLUS] = 85;
-	actionTable[111][MINUS_MINUS] = 86;
-	actionTable[111][NOT] = 90;
-	actionTable[111][ID] = 9;
-	actionTable[111][TRUE] = 96;
-	actionTable[111][FALSE] = 97;
-	actionTable[111][CHARACTER] = 98;
-	actionTable[111][STRINGVAL] = 99;
-	actionTable[111][NUMERAL] = 32;
-	actionTable[111][R] = 137;
-	actionTable[111][Y] = 82;
-	actionTable[111][F] = 83;
-	actionTable[111][LV] = 84;
-	actionTable[111][IDT] = 88;
-	actionTable[111][TRU] = 91;
-	actionTable[111][FALS] = 92;
-	actionTable[111][CH] = 93;
-	actionTable[111][ST] = 94;
-	actionTable[111][NU] = 95
-	;
+	actionTable[111][EQUALS] = -75;
+	actionTable[111][LEFT_SQUARE] = -75;
+	actionTable[111][RIGHT_SQUARE] = -75;
+	actionTable[111][LEFT_BRACES] = -75;
+	actionTable[111][RIGHT_BRACES] = -75;
+	actionTable[111][SEMI_COLON] = -75;
+	actionTable[111][RIGHT_PARENTHESIS] = -75;
+	actionTable[111][COMMA] = -75;
+	actionTable[111][IF] = -75;
+	actionTable[111][ELSE] = -75;
+	actionTable[111][WHILE] = -75;
+	actionTable[111][DO] = -75;
+	actionTable[111][BREAK] = -75;
+	actionTable[111][CONTINUE] = -75;
+	actionTable[111][RETURN] = -75;
+	actionTable[111][AND] = -75;
+	actionTable[111][OR] = -75;
+	actionTable[111][LESS_THAN] = -75;
+	actionTable[111][GREATER_THAN] = -75;
+	actionTable[111][LESS_OR_EQUAL] = -75;
+	actionTable[111][GREATER_OR_EQUAL] = -75;
+	actionTable[111][EQUAL_EQUAL] = -75;
+	actionTable[111][NOT_EQUAL] = -75;
+	actionTable[111][PLUS] = -75;
+	actionTable[111][MINUS] = -75;
+	actionTable[111][TIMES] = -75;
+	actionTable[111][DIVIDE] = -75;
+	actionTable[111][PLUS_PLUS] = -75;
+	actionTable[111][MINUS_MINUS] = -75;
+	actionTable[111][DOT] = -75;
+	actionTable[111][ID] = -75;
 
 	//State: 112
-	actionTable[112][LEFT_PARENTHESIS] = 87;
-	actionTable[112][MINUS] = 89;
-	actionTable[112][PLUS_PLUS] = 85;
-	actionTable[112][MINUS_MINUS] = 86;
-	actionTable[112][NOT] = 90;
-	actionTable[112][ID] = 9;
-	actionTable[112][TRUE] = 96;
-	actionTable[112][FALSE] = 97;
-	actionTable[112][CHARACTER] = 98;
-	actionTable[112][STRINGVAL] = 99;
-	actionTable[112][NUMERAL] = 32;
-	actionTable[112][R] = 138;
-	actionTable[112][Y] = 82;
-	actionTable[112][F] = 83;
-	actionTable[112][LV] = 84;
-	actionTable[112][IDT] = 88;
-	actionTable[112][TRU] = 91;
-	actionTable[112][FALS] = 92;
-	actionTable[112][CH] = 93;
-	actionTable[112][ST] = 94;
-	actionTable[112][NU] = 95
-	;
+	actionTable[112][RIGHT_SQUARE] = 139;
+	actionTable[112][AND] = 114;
+	actionTable[112][OR] = 115;
 
 	//State: 113
-	actionTable[113][LEFT_PARENTHESIS] = 87;
-	actionTable[113][MINUS] = 89;
-	actionTable[113][PLUS_PLUS] = 85;
-	actionTable[113][MINUS_MINUS] = 86;
-	actionTable[113][NOT] = 90;
-	actionTable[113][ID] = 9;
-	actionTable[113][TRUE] = 96;
-	actionTable[113][FALSE] = 97;
-	actionTable[113][CHARACTER] = 98;
-	actionTable[113][STRINGVAL] = 99;
-	actionTable[113][NUMERAL] = 32;
-	actionTable[113][R] = 139;
-	actionTable[113][Y] = 82;
-	actionTable[113][F] = 83;
-	actionTable[113][LV] = 84;
-	actionTable[113][IDT] = 88;
-	actionTable[113][TRU] = 91;
-	actionTable[113][FALS] = 92;
-	actionTable[113][CH] = 93;
-	actionTable[113][ST] = 94;
-	actionTable[113][NU] = 95
-	;
+	actionTable[113][LEFT_BRACES] = -34;
+	actionTable[113][RIGHT_BRACES] = -34;
+	actionTable[113][IF] = -34;
+	actionTable[113][ELSE] = -34;
+	actionTable[113][WHILE] = -34;
+	actionTable[113][DO] = -34;
+	actionTable[113][BREAK] = -34;
+	actionTable[113][CONTINUE] = -34;
+	actionTable[113][RETURN] = -34;
+	actionTable[113][ID] = -34;
 
 	//State: 114
-	actionTable[114][LEFT_PARENTHESIS] = 87;
-	actionTable[114][MINUS] = 89;
-	actionTable[114][PLUS_PLUS] = 85;
-	actionTable[114][MINUS_MINUS] = 86;
-	actionTable[114][NOT] = 90;
-	actionTable[114][ID] = 9;
-	actionTable[114][TRUE] = 96;
-	actionTable[114][FALSE] = 97;
-	actionTable[114][CHARACTER] = 98;
-	actionTable[114][STRINGVAL] = 99;
-	actionTable[114][NUMERAL] = 32;
-	actionTable[114][R] = 140;
-	actionTable[114][Y] = 82;
-	actionTable[114][F] = 83;
-	actionTable[114][LV] = 84;
-	actionTable[114][IDT] = 88;
-	actionTable[114][TRU] = 91;
-	actionTable[114][FALS] = 92;
-	actionTable[114][CH] = 93;
-	actionTable[114][ST] = 94;
-	actionTable[114][NU] = 95
-	;
+	actionTable[114][LEFT_PARENTHESIS] = 92;
+	actionTable[114][MINUS] = 94;
+	actionTable[114][PLUS_PLUS] = 90;
+	actionTable[114][MINUS_MINUS] = 91;
+	actionTable[114][NOT] = 95;
+	actionTable[114][TRUE] = 101;
+	actionTable[114][FALSE] = 102;
+	actionTable[114][CHARACTER] = 103;
+	actionTable[114][STRINGVAL] = 104;
+	actionTable[114][NUMERAL] = 31;
+	actionTable[114][ID] = 22;
+	actionTable[114][L] = 140;
+	actionTable[114][R] = 86;
+	actionTable[114][Y] = 87;
+	actionTable[114][F] = 88;
+	actionTable[114][LV] = 89;
+	actionTable[114][TRU] = 96;
+	actionTable[114][FALS] = 97;
+	actionTable[114][CH] = 98;
+	actionTable[114][ST] = 99;
+	actionTable[114][NU] = 100;
+	actionTable[114][IDU] = 93;
 
 	//State: 115
-	actionTable[115][LEFT_PARENTHESIS] = 87;
-	actionTable[115][MINUS] = 89;
-	actionTable[115][PLUS_PLUS] = 85;
-	actionTable[115][MINUS_MINUS] = 86;
-	actionTable[115][NOT] = 90;
-	actionTable[115][ID] = 9;
-	actionTable[115][TRUE] = 96;
-	actionTable[115][FALSE] = 97;
-	actionTable[115][CHARACTER] = 98;
-	actionTable[115][STRINGVAL] = 99;
-	actionTable[115][NUMERAL] = 32;
-	actionTable[115][R] = 141;
-	actionTable[115][Y] = 82;
-	actionTable[115][F] = 83;
-	actionTable[115][LV] = 84;
-	actionTable[115][IDT] = 88;
-	actionTable[115][TRU] = 91;
-	actionTable[115][FALS] = 92;
-	actionTable[115][CH] = 93;
-	actionTable[115][ST] = 94;
-	actionTable[115][NU] = 95
-	;
+	actionTable[115][LEFT_PARENTHESIS] = 92;
+	actionTable[115][MINUS] = 94;
+	actionTable[115][PLUS_PLUS] = 90;
+	actionTable[115][MINUS_MINUS] = 91;
+	actionTable[115][NOT] = 95;
+	actionTable[115][TRUE] = 101;
+	actionTable[115][FALSE] = 102;
+	actionTable[115][CHARACTER] = 103;
+	actionTable[115][STRINGVAL] = 104;
+	actionTable[115][NUMERAL] = 31;
+	actionTable[115][ID] = 22;
+	actionTable[115][L] = 141;
+	actionTable[115][R] = 86;
+	actionTable[115][Y] = 87;
+	actionTable[115][F] = 88;
+	actionTable[115][LV] = 89;
+	actionTable[115][TRU] = 96;
+	actionTable[115][FALS] = 97;
+	actionTable[115][CH] = 98;
+	actionTable[115][ST] = 99;
+	actionTable[115][NU] = 100;
+	actionTable[115][IDU] = 93;
 
 	//State: 116
-	actionTable[116][LEFT_PARENTHESIS] = 87;
-	actionTable[116][MINUS] = 89;
-	actionTable[116][PLUS_PLUS] = 85;
-	actionTable[116][MINUS_MINUS] = 86;
-	actionTable[116][NOT] = 90;
-	actionTable[116][ID] = 9;
-	actionTable[116][TRUE] = 96;
-	actionTable[116][FALSE] = 97;
-	actionTable[116][CHARACTER] = 98;
-	actionTable[116][STRINGVAL] = 99;
-	actionTable[116][NUMERAL] = 32;
-	actionTable[116][Y] = 142;
-	actionTable[116][F] = 83;
-	actionTable[116][LV] = 84;
-	actionTable[116][IDT] = 88;
-	actionTable[116][TRU] = 91;
-	actionTable[116][FALS] = 92;
-	actionTable[116][CH] = 93;
-	actionTable[116][ST] = 94;
-	actionTable[116][NU] = 95
-	;
+	actionTable[116][LEFT_PARENTHESIS] = 92;
+	actionTable[116][MINUS] = 94;
+	actionTable[116][PLUS_PLUS] = 90;
+	actionTable[116][MINUS_MINUS] = 91;
+	actionTable[116][NOT] = 95;
+	actionTable[116][TRUE] = 101;
+	actionTable[116][FALSE] = 102;
+	actionTable[116][CHARACTER] = 103;
+	actionTable[116][STRINGVAL] = 104;
+	actionTable[116][NUMERAL] = 31;
+	actionTable[116][ID] = 22;
+	actionTable[116][R] = 142;
+	actionTable[116][Y] = 87;
+	actionTable[116][F] = 88;
+	actionTable[116][LV] = 89;
+	actionTable[116][TRU] = 96;
+	actionTable[116][FALS] = 97;
+	actionTable[116][CH] = 98;
+	actionTable[116][ST] = 99;
+	actionTable[116][NU] = 100;
+	actionTable[116][IDU] = 93;
 
 	//State: 117
-	actionTable[117][LEFT_PARENTHESIS] = 87;
-	actionTable[117][MINUS] = 89;
-	actionTable[117][PLUS_PLUS] = 85;
-	actionTable[117][MINUS_MINUS] = 86;
-	actionTable[117][NOT] = 90;
-	actionTable[117][ID] = 9;
-	actionTable[117][TRUE] = 96;
-	actionTable[117][FALSE] = 97;
-	actionTable[117][CHARACTER] = 98;
-	actionTable[117][STRINGVAL] = 99;
-	actionTable[117][NUMERAL] = 32;
-	actionTable[117][Y] = 143;
-	actionTable[117][F] = 83;
-	actionTable[117][LV] = 84;
-	actionTable[117][IDT] = 88;
-	actionTable[117][TRU] = 91;
-	actionTable[117][FALS] = 92;
-	actionTable[117][CH] = 93;
-	actionTable[117][ST] = 94;
-	actionTable[117][NU] = 95
-	;
+	actionTable[117][LEFT_PARENTHESIS] = 92;
+	actionTable[117][MINUS] = 94;
+	actionTable[117][PLUS_PLUS] = 90;
+	actionTable[117][MINUS_MINUS] = 91;
+	actionTable[117][NOT] = 95;
+	actionTable[117][TRUE] = 101;
+	actionTable[117][FALSE] = 102;
+	actionTable[117][CHARACTER] = 103;
+	actionTable[117][STRINGVAL] = 104;
+	actionTable[117][NUMERAL] = 31;
+	actionTable[117][ID] = 22;
+	actionTable[117][R] = 143;
+	actionTable[117][Y] = 87;
+	actionTable[117][F] = 88;
+	actionTable[117][LV] = 89;
+	actionTable[117][TRU] = 96;
+	actionTable[117][FALS] = 97;
+	actionTable[117][CH] = 98;
+	actionTable[117][ST] = 99;
+	actionTable[117][NU] = 100;
+	actionTable[117][IDU] = 93;
 
 	//State: 118
-	actionTable[118][LEFT_PARENTHESIS] = 87;
-	actionTable[118][MINUS] = 89;
-	actionTable[118][PLUS_PLUS] = 85;
-	actionTable[118][MINUS_MINUS] = 86;
-	actionTable[118][NOT] = 90;
-	actionTable[118][ID] = 9;
-	actionTable[118][TRUE] = 96;
-	actionTable[118][FALSE] = 97;
-	actionTable[118][CHARACTER] = 98;
-	actionTable[118][STRINGVAL] = 99;
-	actionTable[118][NUMERAL] = 32;
-	actionTable[118][F] = 144;
-	actionTable[118][LV] = 84;
-	actionTable[118][IDT] = 88;
-	actionTable[118][TRU] = 91;
-	actionTable[118][FALS] = 92;
-	actionTable[118][CH] = 93;
-	actionTable[118][ST] = 94;
-	actionTable[118][NU] = 95
-	;
+	actionTable[118][LEFT_PARENTHESIS] = 92;
+	actionTable[118][MINUS] = 94;
+	actionTable[118][PLUS_PLUS] = 90;
+	actionTable[118][MINUS_MINUS] = 91;
+	actionTable[118][NOT] = 95;
+	actionTable[118][TRUE] = 101;
+	actionTable[118][FALSE] = 102;
+	actionTable[118][CHARACTER] = 103;
+	actionTable[118][STRINGVAL] = 104;
+	actionTable[118][NUMERAL] = 31;
+	actionTable[118][ID] = 22;
+	actionTable[118][R] = 144;
+	actionTable[118][Y] = 87;
+	actionTable[118][F] = 88;
+	actionTable[118][LV] = 89;
+	actionTable[118][TRU] = 96;
+	actionTable[118][FALS] = 97;
+	actionTable[118][CH] = 98;
+	actionTable[118][ST] = 99;
+	actionTable[118][NU] = 100;
+	actionTable[118][IDU] = 93;
 
 	//State: 119
-	actionTable[119][LEFT_PARENTHESIS] = 87;
-	actionTable[119][MINUS] = 89;
-	actionTable[119][PLUS_PLUS] = 85;
-	actionTable[119][MINUS_MINUS] = 86;
-	actionTable[119][NOT] = 90;
-	actionTable[119][ID] = 9;
-	actionTable[119][TRUE] = 96;
-	actionTable[119][FALSE] = 97;
-	actionTable[119][CHARACTER] = 98;
-	actionTable[119][STRINGVAL] = 99;
-	actionTable[119][NUMERAL] = 32;
-	actionTable[119][F] = 145;
-	actionTable[119][LV] = 84;
-	actionTable[119][IDT] = 88;
-	actionTable[119][TRU] = 91;
-	actionTable[119][FALS] = 92;
-	actionTable[119][CH] = 93;
-	actionTable[119][ST] = 94;
-	actionTable[119][NU] = 95
-	;
+	actionTable[119][LEFT_PARENTHESIS] = 92;
+	actionTable[119][MINUS] = 94;
+	actionTable[119][PLUS_PLUS] = 90;
+	actionTable[119][MINUS_MINUS] = 91;
+	actionTable[119][NOT] = 95;
+	actionTable[119][TRUE] = 101;
+	actionTable[119][FALSE] = 102;
+	actionTable[119][CHARACTER] = 103;
+	actionTable[119][STRINGVAL] = 104;
+	actionTable[119][NUMERAL] = 31;
+	actionTable[119][ID] = 22;
+	actionTable[119][R] = 145;
+	actionTable[119][Y] = 87;
+	actionTable[119][F] = 88;
+	actionTable[119][LV] = 89;
+	actionTable[119][TRU] = 96;
+	actionTable[119][FALS] = 97;
+	actionTable[119][CH] = 98;
+	actionTable[119][ST] = 99;
+	actionTable[119][NU] = 100;
+	actionTable[119][IDU] = 93;
 
 	//State: 120
-	actionTable[120][RIGHT_SQUARE] = -54;
-	actionTable[120][SEMI_COLON] = -54;
-	actionTable[120][RIGHT_PARENTHESIS] = -54;
-	actionTable[120][COMMA] = -54;
-	actionTable[120][AND] = -54;
-	actionTable[120][OR] = -54;
-	actionTable[120][LESS_THAN] = -54;
-	actionTable[120][GREATER_THAN] = -54;
-	actionTable[120][LESS_OR_EQUAL] = -54;
-	actionTable[120][GREATER_OR_EQUAL] = -54;
-	actionTable[120][EQUAL_EQUAL] = -54;
-	actionTable[120][EQUALS] = -54;
-	actionTable[120][PLUS] = -54;
-	actionTable[120][MINUS] = -54;
-	actionTable[120][TIMES] = -54;
-	actionTable[120][DIVIDE] = -54;
+	actionTable[120][LEFT_PARENTHESIS] = 92;
+	actionTable[120][MINUS] = 94;
+	actionTable[120][PLUS_PLUS] = 90;
+	actionTable[120][MINUS_MINUS] = 91;
+	actionTable[120][NOT] = 95;
+	actionTable[120][TRUE] = 101;
+	actionTable[120][FALSE] = 102;
+	actionTable[120][CHARACTER] = 103;
+	actionTable[120][STRINGVAL] = 104;
+	actionTable[120][NUMERAL] = 31;
+	actionTable[120][ID] = 22;
+	actionTable[120][R] = 146;
+	actionTable[120][Y] = 87;
+	actionTable[120][F] = 88;
+	actionTable[120][LV] = 89;
+	actionTable[120][TRU] = 96;
+	actionTable[120][FALS] = 97;
+	actionTable[120][CH] = 98;
+	actionTable[120][ST] = 99;
+	actionTable[120][NU] = 100;
+	actionTable[120][IDU] = 93;
 
 	//State: 121
-	actionTable[121][RIGHT_SQUARE] = -55;
-	actionTable[121][SEMI_COLON] = -55;
-	actionTable[121][RIGHT_PARENTHESIS] = -55;
-	actionTable[121][COMMA] = -55;
-	actionTable[121][AND] = -55;
-	actionTable[121][OR] = -55;
-	actionTable[121][LESS_THAN] = -55;
-	actionTable[121][GREATER_THAN] = -55;
-	actionTable[121][LESS_OR_EQUAL] = -55;
-	actionTable[121][GREATER_OR_EQUAL] = -55;
-	actionTable[121][EQUAL_EQUAL] = -55;
-	actionTable[121][EQUALS] = -55;
-	actionTable[121][PLUS] = -55;
-	actionTable[121][MINUS] = -55;
-	actionTable[121][TIMES] = -55;
-	actionTable[121][DIVIDE] = -55;
+	actionTable[121][LEFT_PARENTHESIS] = 92;
+	actionTable[121][MINUS] = 94;
+	actionTable[121][PLUS_PLUS] = 90;
+	actionTable[121][MINUS_MINUS] = 91;
+	actionTable[121][NOT] = 95;
+	actionTable[121][TRUE] = 101;
+	actionTable[121][FALSE] = 102;
+	actionTable[121][CHARACTER] = 103;
+	actionTable[121][STRINGVAL] = 104;
+	actionTable[121][NUMERAL] = 31;
+	actionTable[121][ID] = 22;
+	actionTable[121][R] = 147;
+	actionTable[121][Y] = 87;
+	actionTable[121][F] = 88;
+	actionTable[121][LV] = 89;
+	actionTable[121][TRU] = 96;
+	actionTable[121][FALS] = 97;
+	actionTable[121][CH] = 98;
+	actionTable[121][ST] = 99;
+	actionTable[121][NU] = 100;
+	actionTable[121][IDU] = 93;
 
 	//State: 122
-	actionTable[122][LEFT_SQUARE] = 76;
-	actionTable[122][RIGHT_SQUARE] = -52;
-	actionTable[122][SEMI_COLON] = -52;
-	actionTable[122][RIGHT_PARENTHESIS] = -52;
-	actionTable[122][COMMA] = -52;
-	actionTable[122][AND] = -52;
-	actionTable[122][OR] = -52;
-	actionTable[122][LESS_THAN] = -52;
-	actionTable[122][GREATER_THAN] = -52;
-	actionTable[122][LESS_OR_EQUAL] = -52;
-	actionTable[122][GREATER_OR_EQUAL] = -52;
-	actionTable[122][EQUAL_EQUAL] = -52;
-	actionTable[122][EQUALS] = -52;
-	actionTable[122][PLUS] = -52;
-	actionTable[122][MINUS] = -52;
-	actionTable[122][TIMES] = -52;
-	actionTable[122][DIVIDE] = -52;
-	actionTable[122][DOT] = 75;
+	actionTable[122][LEFT_PARENTHESIS] = 92;
+	actionTable[122][MINUS] = 94;
+	actionTable[122][PLUS_PLUS] = 90;
+	actionTable[122][MINUS_MINUS] = 91;
+	actionTable[122][NOT] = 95;
+	actionTable[122][TRUE] = 101;
+	actionTable[122][FALSE] = 102;
+	actionTable[122][CHARACTER] = 103;
+	actionTable[122][STRINGVAL] = 104;
+	actionTable[122][NUMERAL] = 31;
+	actionTable[122][ID] = 22;
+	actionTable[122][Y] = 148;
+	actionTable[122][F] = 88;
+	actionTable[122][LV] = 89;
+	actionTable[122][TRU] = 96;
+	actionTable[122][FALS] = 97;
+	actionTable[122][CH] = 98;
+	actionTable[122][ST] = 99;
+	actionTable[122][NU] = 100;
+	actionTable[122][IDU] = 93;
 
 	//State: 123
-	actionTable[123][LEFT_SQUARE] = 76;
-	actionTable[123][RIGHT_SQUARE] = -53;
-	actionTable[123][SEMI_COLON] = -53;
-	actionTable[123][RIGHT_PARENTHESIS] = -53;
-	actionTable[123][COMMA] = -53;
-	actionTable[123][AND] = -53;
-	actionTable[123][OR] = -53;
-	actionTable[123][LESS_THAN] = -53;
-	actionTable[123][GREATER_THAN] = -53;
-	actionTable[123][LESS_OR_EQUAL] = -53;
-	actionTable[123][GREATER_OR_EQUAL] = -53;
-	actionTable[123][EQUAL_EQUAL] = -53;
-	actionTable[123][EQUALS] = -53;
-	actionTable[123][PLUS] = -53;
-	actionTable[123][MINUS] = -53;
-	actionTable[123][TIMES] = -53;
-	actionTable[123][DIVIDE] = -53;
-	actionTable[123][DOT] = 75;
+	actionTable[123][LEFT_PARENTHESIS] = 92;
+	actionTable[123][MINUS] = 94;
+	actionTable[123][PLUS_PLUS] = 90;
+	actionTable[123][MINUS_MINUS] = 91;
+	actionTable[123][NOT] = 95;
+	actionTable[123][TRUE] = 101;
+	actionTable[123][FALSE] = 102;
+	actionTable[123][CHARACTER] = 103;
+	actionTable[123][STRINGVAL] = 104;
+	actionTable[123][NUMERAL] = 31;
+	actionTable[123][ID] = 22;
+	actionTable[123][Y] = 149;
+	actionTable[123][F] = 88;
+	actionTable[123][LV] = 89;
+	actionTable[123][TRU] = 96;
+	actionTable[123][FALS] = 97;
+	actionTable[123][CH] = 98;
+	actionTable[123][ST] = 99;
+	actionTable[123][NU] = 100;
+	actionTable[123][IDU] = 93;
 
 	//State: 124
-	actionTable[124][RIGHT_PARENTHESIS] = 146;
-	actionTable[124][AND] = 108;
-	actionTable[124][OR] = 109;
+	actionTable[124][LEFT_PARENTHESIS] = 92;
+	actionTable[124][MINUS] = 94;
+	actionTable[124][PLUS_PLUS] = 90;
+	actionTable[124][MINUS_MINUS] = 91;
+	actionTable[124][NOT] = 95;
+	actionTable[124][TRUE] = 101;
+	actionTable[124][FALSE] = 102;
+	actionTable[124][CHARACTER] = 103;
+	actionTable[124][STRINGVAL] = 104;
+	actionTable[124][NUMERAL] = 31;
+	actionTable[124][ID] = 22;
+	actionTable[124][F] = 150;
+	actionTable[124][LV] = 89;
+	actionTable[124][TRU] = 96;
+	actionTable[124][FALS] = 97;
+	actionTable[124][CH] = 98;
+	actionTable[124][ST] = 99;
+	actionTable[124][NU] = 100;
+	actionTable[124][IDU] = 93;
 
 	//State: 125
-	actionTable[125][LEFT_PARENTHESIS] = 87;
-	actionTable[125][MINUS] = 89;
-	actionTable[125][PLUS_PLUS] = 85;
-	actionTable[125][MINUS_MINUS] = 86;
-	actionTable[125][NOT] = 90;
-	actionTable[125][ID] = 9;
-	actionTable[125][TRUE] = 96;
-	actionTable[125][FALSE] = 97;
-	actionTable[125][CHARACTER] = 98;
-	actionTable[125][STRINGVAL] = 99;
-	actionTable[125][NUMERAL] = 32;
-	actionTable[125][E] = 148;
-	actionTable[125][L] = 80;
-	actionTable[125][R] = 81;
-	actionTable[125][Y] = 82;
-	actionTable[125][F] = 83;
-	actionTable[125][LE] = 147;
-	actionTable[125][LV] = 84;
-	actionTable[125][IDT] = 88;
-	actionTable[125][TRU] = 91;
-	actionTable[125][FALS] = 92;
-	actionTable[125][CH] = 93;
-	actionTable[125][ST] = 94;
-	actionTable[125][NU] = 95
-	;
+	actionTable[125][LEFT_PARENTHESIS] = 92;
+	actionTable[125][MINUS] = 94;
+	actionTable[125][PLUS_PLUS] = 90;
+	actionTable[125][MINUS_MINUS] = 91;
+	actionTable[125][NOT] = 95;
+	actionTable[125][TRUE] = 101;
+	actionTable[125][FALSE] = 102;
+	actionTable[125][CHARACTER] = 103;
+	actionTable[125][STRINGVAL] = 104;
+	actionTable[125][NUMERAL] = 31;
+	actionTable[125][ID] = 22;
+	actionTable[125][F] = 151;
+	actionTable[125][LV] = 89;
+	actionTable[125][TRU] = 96;
+	actionTable[125][FALS] = 97;
+	actionTable[125][CH] = 98;
+	actionTable[125][ST] = 99;
+	actionTable[125][NU] = 100;
+	actionTable[125][IDU] = 93;
 
 	//State: 126
-	actionTable[126][RIGHT_SQUARE] = -58;
-	actionTable[126][SEMI_COLON] = -58;
-	actionTable[126][RIGHT_PARENTHESIS] = -58;
-	actionTable[126][COMMA] = -58;
-	actionTable[126][AND] = -58;
-	actionTable[126][OR] = -58;
-	actionTable[126][LESS_THAN] = -58;
-	actionTable[126][GREATER_THAN] = -58;
-	actionTable[126][LESS_OR_EQUAL] = -58;
-	actionTable[126][GREATER_OR_EQUAL] = -58;
-	actionTable[126][EQUAL_EQUAL] = -58;
-	actionTable[126][EQUALS] = -58;
-	actionTable[126][PLUS] = -58;
-	actionTable[126][MINUS] = -58;
-	actionTable[126][TIMES] = -58;
-	actionTable[126][DIVIDE] = -58;
+	actionTable[126][RIGHT_SQUARE] = -54;
+	actionTable[126][SEMI_COLON] = -54;
+	actionTable[126][RIGHT_PARENTHESIS] = -54;
+	actionTable[126][COMMA] = -54;
+	actionTable[126][AND] = -54;
+	actionTable[126][OR] = -54;
+	actionTable[126][LESS_THAN] = -54;
+	actionTable[126][GREATER_THAN] = -54;
+	actionTable[126][LESS_OR_EQUAL] = -54;
+	actionTable[126][GREATER_OR_EQUAL] = -54;
+	actionTable[126][EQUAL_EQUAL] = -54;
+	actionTable[126][NOT_EQUAL] = -54;
+	actionTable[126][PLUS] = -54;
+	actionTable[126][MINUS] = -54;
+	actionTable[126][TIMES] = -54;
+	actionTable[126][DIVIDE] = -54;
 
 	//State: 127
-	actionTable[127][RIGHT_SQUARE] = -59;
-	actionTable[127][SEMI_COLON] = -59;
-	actionTable[127][RIGHT_PARENTHESIS] = -59;
-	actionTable[127][COMMA] = -59;
-	actionTable[127][AND] = -59;
-	actionTable[127][OR] = -59;
-	actionTable[127][LESS_THAN] = -59;
-	actionTable[127][GREATER_THAN] = -59;
-	actionTable[127][LESS_OR_EQUAL] = -59;
-	actionTable[127][GREATER_OR_EQUAL] = -59;
-	actionTable[127][EQUAL_EQUAL] = -59;
-	actionTable[127][EQUALS] = -59;
-	actionTable[127][PLUS] = -59;
-	actionTable[127][MINUS] = -59;
-	actionTable[127][TIMES] = -59;
-	actionTable[127][DIVIDE] = -59;
+	actionTable[127][RIGHT_SQUARE] = -55;
+	actionTable[127][SEMI_COLON] = -55;
+	actionTable[127][RIGHT_PARENTHESIS] = -55;
+	actionTable[127][COMMA] = -55;
+	actionTable[127][AND] = -55;
+	actionTable[127][OR] = -55;
+	actionTable[127][LESS_THAN] = -55;
+	actionTable[127][GREATER_THAN] = -55;
+	actionTable[127][LESS_OR_EQUAL] = -55;
+	actionTable[127][GREATER_OR_EQUAL] = -55;
+	actionTable[127][EQUAL_EQUAL] = -55;
+	actionTable[127][NOT_EQUAL] = -55;
+	actionTable[127][PLUS] = -55;
+	actionTable[127][MINUS] = -55;
+	actionTable[127][TIMES] = -55;
+	actionTable[127][DIVIDE] = -55;
 
 	//State: 128
-	actionTable[128][SEMI_COLON] = 149;
+	actionTable[128][LEFT_SQUARE] = 81;
+	actionTable[128][RIGHT_SQUARE] = -52;
+	actionTable[128][SEMI_COLON] = -52;
+	actionTable[128][RIGHT_PARENTHESIS] = -52;
+	actionTable[128][COMMA] = -52;
+	actionTable[128][AND] = -52;
+	actionTable[128][OR] = -52;
+	actionTable[128][LESS_THAN] = -52;
+	actionTable[128][GREATER_THAN] = -52;
+	actionTable[128][LESS_OR_EQUAL] = -52;
+	actionTable[128][GREATER_OR_EQUAL] = -52;
+	actionTable[128][EQUAL_EQUAL] = -52;
+	actionTable[128][NOT_EQUAL] = -52;
+	actionTable[128][PLUS] = -52;
+	actionTable[128][MINUS] = -52;
+	actionTable[128][TIMES] = -52;
+	actionTable[128][DIVIDE] = -52;
+	actionTable[128][DOT] = 80;
 
 	//State: 129
-	actionTable[129][LEFT_BRACES] = 44;
-	actionTable[129][IF] = 58;
-	actionTable[129][WHILE] = 59;
-	actionTable[129][DO] = 60;
-	actionTable[129][BREAK] = 63;
-	actionTable[129][CONTINUE] = 64;
-	actionTable[129][RETURN] = 65;
-	actionTable[129][ID] = 9;
-	actionTable[129][B] = 61;
-	actionTable[129][S] = 150;
-	actionTable[129][LV] = 62;
-	actionTable[129][IDT] = 66;
+	actionTable[129][LEFT_SQUARE] = 81;
+	actionTable[129][RIGHT_SQUARE] = -53;
+	actionTable[129][SEMI_COLON] = -53;
+	actionTable[129][RIGHT_PARENTHESIS] = -53;
+	actionTable[129][COMMA] = -53;
+	actionTable[129][AND] = -53;
+	actionTable[129][OR] = -53;
+	actionTable[129][LESS_THAN] = -53;
+	actionTable[129][GREATER_THAN] = -53;
+	actionTable[129][LESS_OR_EQUAL] = -53;
+	actionTable[129][GREATER_OR_EQUAL] = -53;
+	actionTable[129][EQUAL_EQUAL] = -53;
+	actionTable[129][NOT_EQUAL] = -53;
+	actionTable[129][PLUS] = -53;
+	actionTable[129][MINUS] = -53;
+	actionTable[129][TIMES] = -53;
+	actionTable[129][DIVIDE] = -53;
+	actionTable[129][DOT] = 80;
 
 	//State: 130
-	actionTable[130][LEFT_BRACES] = 44;
-	actionTable[130][IF] = 58;
-	actionTable[130][WHILE] = 59;
-	actionTable[130][DO] = 60;
-	actionTable[130][BREAK] = 63;
-	actionTable[130][CONTINUE] = 64;
-	actionTable[130][RETURN] = 65;
-	actionTable[130][ID] = 9;
-	actionTable[130][B] = 61;
-	actionTable[130][S] = 151;
-	actionTable[130][LV] = 62;
-	actionTable[130][IDT] = 66;
+	actionTable[130][RIGHT_PARENTHESIS] = 152;
+	actionTable[130][AND] = 114;
+	actionTable[130][OR] = 115;
 
 	//State: 131
-	actionTable[131][LEFT_PARENTHESIS] = 87;
-	actionTable[131][MINUS] = 89;
-	actionTable[131][PLUS_PLUS] = 85;
-	actionTable[131][MINUS_MINUS] = 86;
-	actionTable[131][NOT] = 90;
-	actionTable[131][ID] = 9;
-	actionTable[131][TRUE] = 96;
-	actionTable[131][FALSE] = 97;
-	actionTable[131][CHARACTER] = 98;
-	actionTable[131][STRINGVAL] = 99;
-	actionTable[131][NUMERAL] = 32;
-	actionTable[131][E] = 152;
-	actionTable[131][L] = 80;
-	actionTable[131][R] = 81;
-	actionTable[131][Y] = 82;
-	actionTable[131][F] = 83;
-	actionTable[131][LV] = 84;
-	actionTable[131][IDT] = 88;
-	actionTable[131][TRU] = 91;
-	actionTable[131][FALS] = 92;
-	actionTable[131][CH] = 93;
-	actionTable[131][ST] = 94;
-	actionTable[131][NU] = 95
-	;
+	actionTable[131][LEFT_PARENTHESIS] = 153;
 
 	//State: 132
-	actionTable[132][LEFT_BRACES] = -31;
-	actionTable[132][RIGHT_BRACES] = -31;
-	actionTable[132][IF] = -31;
-	actionTable[132][ELSE] = -31;
-	actionTable[132][WHILE] = -31;
-	actionTable[132][DO] = -31;
-	actionTable[132][BREAK] = -31;
-	actionTable[132][CONTINUE] = -31;
-	actionTable[132][RETURN] = -31;
-	actionTable[132][ID] = -31;
+	actionTable[132][RIGHT_SQUARE] = -58;
+	actionTable[132][SEMI_COLON] = -58;
+	actionTable[132][RIGHT_PARENTHESIS] = -58;
+	actionTable[132][COMMA] = -58;
+	actionTable[132][AND] = -58;
+	actionTable[132][OR] = -58;
+	actionTable[132][LESS_THAN] = -58;
+	actionTable[132][GREATER_THAN] = -58;
+	actionTable[132][LESS_OR_EQUAL] = -58;
+	actionTable[132][GREATER_OR_EQUAL] = -58;
+	actionTable[132][EQUAL_EQUAL] = -58;
+	actionTable[132][NOT_EQUAL] = -58;
+	actionTable[132][PLUS] = -58;
+	actionTable[132][MINUS] = -58;
+	actionTable[132][TIMES] = -58;
+	actionTable[132][DIVIDE] = -58;
 
 	//State: 133
-	actionTable[133][EQUALS] = -68;
-	actionTable[133][LEFT_SQUARE] = -68;
-	actionTable[133][RIGHT_SQUARE] = -68;
-	actionTable[133][SEMI_COLON] = -68;
-	actionTable[133][RIGHT_PARENTHESIS] = -68;
-	actionTable[133][COMMA] = -68;
-	actionTable[133][AND] = -68;
-	actionTable[133][OR] = -68;
-	actionTable[133][LESS_THAN] = -68;
-	actionTable[133][GREATER_THAN] = -68;
-	actionTable[133][LESS_OR_EQUAL] = -68;
-	actionTable[133][GREATER_OR_EQUAL] = -68;
-	actionTable[133][EQUAL_EQUAL] = -68;
-	actionTable[133][EQUALS] = -68;
-	actionTable[133][PLUS] = -68;
-	actionTable[133][MINUS] = -68;
-	actionTable[133][TIMES] = -68;
-	actionTable[133][DIVIDE] = -68;
-	actionTable[133][PLUS_PLUS] = -68;
-	actionTable[133][MINUS_MINUS] = -68;
-	actionTable[133][DOT] = -68;
+	actionTable[133][RIGHT_SQUARE] = -59;
+	actionTable[133][SEMI_COLON] = -59;
+	actionTable[133][RIGHT_PARENTHESIS] = -59;
+	actionTable[133][COMMA] = -59;
+	actionTable[133][AND] = -59;
+	actionTable[133][OR] = -59;
+	actionTable[133][LESS_THAN] = -59;
+	actionTable[133][GREATER_THAN] = -59;
+	actionTable[133][LESS_OR_EQUAL] = -59;
+	actionTable[133][GREATER_OR_EQUAL] = -59;
+	actionTable[133][EQUAL_EQUAL] = -59;
+	actionTable[133][NOT_EQUAL] = -59;
+	actionTable[133][PLUS] = -59;
+	actionTable[133][MINUS] = -59;
+	actionTable[133][TIMES] = -59;
+	actionTable[133][DIVIDE] = -59;
 
 	//State: 134
-	actionTable[134][RIGHT_SQUARE] = -35;
-	actionTable[134][SEMI_COLON] = -35;
-	actionTable[134][RIGHT_PARENTHESIS] = -35;
-	actionTable[134][COMMA] = -35;
-	actionTable[134][AND] = -35;
-	actionTable[134][OR] = -35;
-	actionTable[134][LESS_THAN] = 110;
-	actionTable[134][GREATER_THAN] = 111;
-	actionTable[134][LESS_OR_EQUAL] = 112;
-	actionTable[134][GREATER_OR_EQUAL] = 113;
-	actionTable[134][EQUAL_EQUAL] = 114;
-	actionTable[134][EQUALS] = 115;
+	actionTable[134][SEMI_COLON] = 154;
 
 	//State: 135
-	actionTable[135][RIGHT_SQUARE] = -36;
-	actionTable[135][SEMI_COLON] = -36;
-	actionTable[135][RIGHT_PARENTHESIS] = -36;
-	actionTable[135][COMMA] = -36;
-	actionTable[135][AND] = -36;
-	actionTable[135][OR] = -36;
-	actionTable[135][LESS_THAN] = 110;
-	actionTable[135][GREATER_THAN] = 111;
-	actionTable[135][LESS_OR_EQUAL] = 112;
-	actionTable[135][GREATER_OR_EQUAL] = 113;
-	actionTable[135][EQUAL_EQUAL] = 114;
-	actionTable[135][EQUALS] = 115;
+	actionTable[135][LEFT_BRACES] = -84;
+	actionTable[135][RIGHT_BRACES] = -84;
+	actionTable[135][IF] = -84;
+	actionTable[135][ELSE] = -84;
+	actionTable[135][WHILE] = -84;
+	actionTable[135][DO] = -84;
+	actionTable[135][BREAK] = -84;
+	actionTable[135][CONTINUE] = -84;
+	actionTable[135][RETURN] = -84;
+	actionTable[135][ID] = -84;
+	actionTable[135][MT] = 155;
 
 	//State: 136
-	actionTable[136][RIGHT_SQUARE] = -38;
-	actionTable[136][SEMI_COLON] = -38;
-	actionTable[136][RIGHT_PARENTHESIS] = -38;
-	actionTable[136][COMMA] = -38;
-	actionTable[136][AND] = -38;
-	actionTable[136][OR] = -38;
-	actionTable[136][LESS_THAN] = -38;
-	actionTable[136][GREATER_THAN] = -38;
-	actionTable[136][LESS_OR_EQUAL] = -38;
-	actionTable[136][GREATER_OR_EQUAL] = -38;
-	actionTable[136][EQUAL_EQUAL] = -38;
-	actionTable[136][EQUALS] = -38;
-	actionTable[136][PLUS] = 116;
-	actionTable[136][MINUS] = 117;
+	actionTable[136][RIGHT_PARENTHESIS] = 156;
+	actionTable[136][AND] = 114;
+	actionTable[136][OR] = 115;
 
 	//State: 137
-	actionTable[137][RIGHT_SQUARE] = -39;
-	actionTable[137][SEMI_COLON] = -39;
-	actionTable[137][RIGHT_PARENTHESIS] = -39;
-	actionTable[137][COMMA] = -39;
-	actionTable[137][AND] = -39;
-	actionTable[137][OR] = -39;
-	actionTable[137][LESS_THAN] = -39;
-	actionTable[137][GREATER_THAN] = -39;
-	actionTable[137][LESS_OR_EQUAL] = -39;
-	actionTable[137][GREATER_OR_EQUAL] = -39;
-	actionTable[137][EQUAL_EQUAL] = -39;
-	actionTable[137][EQUALS] = -39;
-	actionTable[137][PLUS] = 116;
-	actionTable[137][MINUS] = 117;
+	actionTable[137][LEFT_PARENTHESIS] = 157;
 
 	//State: 138
-	actionTable[138][RIGHT_SQUARE] = -40;
-	actionTable[138][SEMI_COLON] = -40;
-	actionTable[138][RIGHT_PARENTHESIS] = -40;
-	actionTable[138][COMMA] = -40;
-	actionTable[138][AND] = -40;
-	actionTable[138][OR] = -40;
-	actionTable[138][LESS_THAN] = -40;
-	actionTable[138][GREATER_THAN] = -40;
-	actionTable[138][LESS_OR_EQUAL] = -40;
-	actionTable[138][GREATER_OR_EQUAL] = -40;
-	actionTable[138][EQUAL_EQUAL] = -40;
-	actionTable[138][EQUALS] = -40;
-	actionTable[138][PLUS] = 116;
-	actionTable[138][MINUS] = 117;
+	actionTable[138][SEMI_COLON] = 158;
+	actionTable[138][AND] = 114;
+	actionTable[138][OR] = 115;
 
 	//State: 139
-	actionTable[139][RIGHT_SQUARE] = -41;
-	actionTable[139][SEMI_COLON] = -41;
-	actionTable[139][RIGHT_PARENTHESIS] = -41;
-	actionTable[139][COMMA] = -41;
-	actionTable[139][AND] = -41;
-	actionTable[139][OR] = -41;
-	actionTable[139][LESS_THAN] = -41;
-	actionTable[139][GREATER_THAN] = -41;
-	actionTable[139][LESS_OR_EQUAL] = -41;
-	actionTable[139][GREATER_OR_EQUAL] = -41;
-	actionTable[139][EQUAL_EQUAL] = -41;
-	actionTable[139][EQUALS] = -41;
-	actionTable[139][PLUS] = 116;
-	actionTable[139][MINUS] = 117;
+	actionTable[139][EQUALS] = -68;
+	actionTable[139][LEFT_SQUARE] = -68;
+	actionTable[139][RIGHT_SQUARE] = -68;
+	actionTable[139][LEFT_BRACES] = -68;
+	actionTable[139][RIGHT_BRACES] = -68;
+	actionTable[139][SEMI_COLON] = -68;
+	actionTable[139][RIGHT_PARENTHESIS] = -68;
+	actionTable[139][COMMA] = -68;
+	actionTable[139][IF] = -68;
+	actionTable[139][ELSE] = -68;
+	actionTable[139][WHILE] = -68;
+	actionTable[139][DO] = -68;
+	actionTable[139][BREAK] = -68;
+	actionTable[139][CONTINUE] = -68;
+	actionTable[139][RETURN] = -68;
+	actionTable[139][AND] = -68;
+	actionTable[139][OR] = -68;
+	actionTable[139][LESS_THAN] = -68;
+	actionTable[139][GREATER_THAN] = -68;
+	actionTable[139][LESS_OR_EQUAL] = -68;
+	actionTable[139][GREATER_OR_EQUAL] = -68;
+	actionTable[139][EQUAL_EQUAL] = -68;
+	actionTable[139][NOT_EQUAL] = -68;
+	actionTable[139][PLUS] = -68;
+	actionTable[139][MINUS] = -68;
+	actionTable[139][TIMES] = -68;
+	actionTable[139][DIVIDE] = -68;
+	actionTable[139][PLUS_PLUS] = -68;
+	actionTable[139][MINUS_MINUS] = -68;
+	actionTable[139][DOT] = -68;
+	actionTable[139][ID] = -68;
 
 	//State: 140
-	actionTable[140][RIGHT_SQUARE] = -42;
-	actionTable[140][SEMI_COLON] = -42;
-	actionTable[140][RIGHT_PARENTHESIS] = -42;
-	actionTable[140][COMMA] = -42;
-	actionTable[140][AND] = -42;
-	actionTable[140][OR] = -42;
-	actionTable[140][LESS_THAN] = -42;
-	actionTable[140][GREATER_THAN] = -42;
-	actionTable[140][LESS_OR_EQUAL] = -42;
-	actionTable[140][GREATER_OR_EQUAL] = -42;
-	actionTable[140][EQUAL_EQUAL] = -42;
-	actionTable[140][EQUALS] = -42;
-	actionTable[140][PLUS] = 116;
-	actionTable[140][MINUS] = 117;
+	actionTable[140][RIGHT_SQUARE] = -35;
+	actionTable[140][SEMI_COLON] = -35;
+	actionTable[140][RIGHT_PARENTHESIS] = -35;
+	actionTable[140][COMMA] = -35;
+	actionTable[140][AND] = -35;
+	actionTable[140][OR] = -35;
+	actionTable[140][LESS_THAN] = 116;
+	actionTable[140][GREATER_THAN] = 117;
+	actionTable[140][LESS_OR_EQUAL] = 118;
+	actionTable[140][GREATER_OR_EQUAL] = 119;
+	actionTable[140][EQUAL_EQUAL] = 120;
+	actionTable[140][NOT_EQUAL] = 121;
 
 	//State: 141
-	actionTable[141][RIGHT_SQUARE] = -43;
-	actionTable[141][SEMI_COLON] = -43;
-	actionTable[141][RIGHT_PARENTHESIS] = -43;
-	actionTable[141][COMMA] = -43;
-	actionTable[141][AND] = -43;
-	actionTable[141][OR] = -43;
-	actionTable[141][LESS_THAN] = -43;
-	actionTable[141][GREATER_THAN] = -43;
-	actionTable[141][LESS_OR_EQUAL] = -43;
-	actionTable[141][GREATER_OR_EQUAL] = -43;
-	actionTable[141][EQUAL_EQUAL] = -43;
-	actionTable[141][EQUALS] = -43;
-	actionTable[141][PLUS] = 116;
-	actionTable[141][MINUS] = 117;
+	actionTable[141][RIGHT_SQUARE] = -36;
+	actionTable[141][SEMI_COLON] = -36;
+	actionTable[141][RIGHT_PARENTHESIS] = -36;
+	actionTable[141][COMMA] = -36;
+	actionTable[141][AND] = -36;
+	actionTable[141][OR] = -36;
+	actionTable[141][LESS_THAN] = 116;
+	actionTable[141][GREATER_THAN] = 117;
+	actionTable[141][LESS_OR_EQUAL] = 118;
+	actionTable[141][GREATER_OR_EQUAL] = 119;
+	actionTable[141][EQUAL_EQUAL] = 120;
+	actionTable[141][NOT_EQUAL] = 121;
 
 	//State: 142
-	actionTable[142][RIGHT_SQUARE] = -45;
-	actionTable[142][SEMI_COLON] = -45;
-	actionTable[142][RIGHT_PARENTHESIS] = -45;
-	actionTable[142][COMMA] = -45;
-	actionTable[142][AND] = -45;
-	actionTable[142][OR] = -45;
-	actionTable[142][LESS_THAN] = -45;
-	actionTable[142][GREATER_THAN] = -45;
-	actionTable[142][LESS_OR_EQUAL] = -45;
-	actionTable[142][GREATER_OR_EQUAL] = -45;
-	actionTable[142][EQUAL_EQUAL] = -45;
-	actionTable[142][EQUALS] = -45;
-	actionTable[142][PLUS] = -45;
-	actionTable[142][MINUS] = -45;
-	actionTable[142][TIMES] = 118;
-	actionTable[142][DIVIDE] = 119;
+	actionTable[142][RIGHT_SQUARE] = -38;
+	actionTable[142][SEMI_COLON] = -38;
+	actionTable[142][RIGHT_PARENTHESIS] = -38;
+	actionTable[142][COMMA] = -38;
+	actionTable[142][AND] = -38;
+	actionTable[142][OR] = -38;
+	actionTable[142][LESS_THAN] = -38;
+	actionTable[142][GREATER_THAN] = -38;
+	actionTable[142][LESS_OR_EQUAL] = -38;
+	actionTable[142][GREATER_OR_EQUAL] = -38;
+	actionTable[142][EQUAL_EQUAL] = -38;
+	actionTable[142][NOT_EQUAL] = -38;
+	actionTable[142][PLUS] = 122;
+	actionTable[142][MINUS] = 123;
 
 	//State: 143
-	actionTable[143][RIGHT_SQUARE] = -46;
-	actionTable[143][SEMI_COLON] = -46;
-	actionTable[143][RIGHT_PARENTHESIS] = -46;
-	actionTable[143][COMMA] = -46;
-	actionTable[143][AND] = -46;
-	actionTable[143][OR] = -46;
-	actionTable[143][LESS_THAN] = -46;
-	actionTable[143][GREATER_THAN] = -46;
-	actionTable[143][LESS_OR_EQUAL] = -46;
-	actionTable[143][GREATER_OR_EQUAL] = -46;
-	actionTable[143][EQUAL_EQUAL] = -46;
-	actionTable[143][EQUALS] = -46;
-	actionTable[143][PLUS] = -46;
-	actionTable[143][MINUS] = -46;
-	actionTable[143][TIMES] = 118;
-	actionTable[143][DIVIDE] = 119;
+	actionTable[143][RIGHT_SQUARE] = -39;
+	actionTable[143][SEMI_COLON] = -39;
+	actionTable[143][RIGHT_PARENTHESIS] = -39;
+	actionTable[143][COMMA] = -39;
+	actionTable[143][AND] = -39;
+	actionTable[143][OR] = -39;
+	actionTable[143][LESS_THAN] = -39;
+	actionTable[143][GREATER_THAN] = -39;
+	actionTable[143][LESS_OR_EQUAL] = -39;
+	actionTable[143][GREATER_OR_EQUAL] = -39;
+	actionTable[143][EQUAL_EQUAL] = -39;
+	actionTable[143][NOT_EQUAL] = -39;
+	actionTable[143][PLUS] = 122;
+	actionTable[143][MINUS] = 123;
 
 	//State: 144
-	actionTable[144][RIGHT_SQUARE] = -48;
-	actionTable[144][SEMI_COLON] = -48;
-	actionTable[144][RIGHT_PARENTHESIS] = -48;
-	actionTable[144][COMMA] = -48;
-	actionTable[144][AND] = -48;
-	actionTable[144][OR] = -48;
-	actionTable[144][LESS_THAN] = -48;
-	actionTable[144][GREATER_THAN] = -48;
-	actionTable[144][LESS_OR_EQUAL] = -48;
-	actionTable[144][GREATER_OR_EQUAL] = -48;
-	actionTable[144][EQUAL_EQUAL] = -48;
-	actionTable[144][EQUALS] = -48;
-	actionTable[144][PLUS] = -48;
-	actionTable[144][MINUS] = -48;
-	actionTable[144][TIMES] = -48;
-	actionTable[144][DIVIDE] = -48;
+	actionTable[144][RIGHT_SQUARE] = -40;
+	actionTable[144][SEMI_COLON] = -40;
+	actionTable[144][RIGHT_PARENTHESIS] = -40;
+	actionTable[144][COMMA] = -40;
+	actionTable[144][AND] = -40;
+	actionTable[144][OR] = -40;
+	actionTable[144][LESS_THAN] = -40;
+	actionTable[144][GREATER_THAN] = -40;
+	actionTable[144][LESS_OR_EQUAL] = -40;
+	actionTable[144][GREATER_OR_EQUAL] = -40;
+	actionTable[144][EQUAL_EQUAL] = -40;
+	actionTable[144][NOT_EQUAL] = -40;
+	actionTable[144][PLUS] = 122;
+	actionTable[144][MINUS] = 123;
 
 	//State: 145
-	actionTable[145][RIGHT_SQUARE] = -49;
-	actionTable[145][SEMI_COLON] = -49;
-	actionTable[145][RIGHT_PARENTHESIS] = -49;
-	actionTable[145][COMMA] = -49;
-	actionTable[145][AND] = -49;
-	actionTable[145][OR] = -49;
-	actionTable[145][LESS_THAN] = -49;
-	actionTable[145][GREATER_THAN] = -49;
-	actionTable[145][LESS_OR_EQUAL] = -49;
-	actionTable[145][GREATER_OR_EQUAL] = -49;
-	actionTable[145][EQUAL_EQUAL] = -49;
-	actionTable[145][EQUALS] = -49;
-	actionTable[145][PLUS] = -49;
-	actionTable[145][MINUS] = -49;
-	actionTable[145][TIMES] = -49;
-	actionTable[145][DIVIDE] = -49;
+	actionTable[145][RIGHT_SQUARE] = -41;
+	actionTable[145][SEMI_COLON] = -41;
+	actionTable[145][RIGHT_PARENTHESIS] = -41;
+	actionTable[145][COMMA] = -41;
+	actionTable[145][AND] = -41;
+	actionTable[145][OR] = -41;
+	actionTable[145][LESS_THAN] = -41;
+	actionTable[145][GREATER_THAN] = -41;
+	actionTable[145][LESS_OR_EQUAL] = -41;
+	actionTable[145][GREATER_OR_EQUAL] = -41;
+	actionTable[145][EQUAL_EQUAL] = -41;
+	actionTable[145][NOT_EQUAL] = -41;
+	actionTable[145][PLUS] = 122;
+	actionTable[145][MINUS] = 123;
 
 	//State: 146
-	actionTable[146][RIGHT_SQUARE] = -56;
-	actionTable[146][SEMI_COLON] = -56;
-	actionTable[146][RIGHT_PARENTHESIS] = -56;
-	actionTable[146][COMMA] = -56;
-	actionTable[146][AND] = -56;
-	actionTable[146][OR] = -56;
-	actionTable[146][LESS_THAN] = -56;
-	actionTable[146][GREATER_THAN] = -56;
-	actionTable[146][LESS_OR_EQUAL] = -56;
-	actionTable[146][GREATER_OR_EQUAL] = -56;
-	actionTable[146][EQUAL_EQUAL] = -56;
-	actionTable[146][EQUALS] = -56;
-	actionTable[146][PLUS] = -56;
-	actionTable[146][MINUS] = -56;
-	actionTable[146][TIMES] = -56;
-	actionTable[146][DIVIDE] = -56;
+	actionTable[146][RIGHT_SQUARE] = -42;
+	actionTable[146][SEMI_COLON] = -42;
+	actionTable[146][RIGHT_PARENTHESIS] = -42;
+	actionTable[146][COMMA] = -42;
+	actionTable[146][AND] = -42;
+	actionTable[146][OR] = -42;
+	actionTable[146][LESS_THAN] = -42;
+	actionTable[146][GREATER_THAN] = -42;
+	actionTable[146][LESS_OR_EQUAL] = -42;
+	actionTable[146][GREATER_OR_EQUAL] = -42;
+	actionTable[146][EQUAL_EQUAL] = -42;
+	actionTable[146][NOT_EQUAL] = -42;
+	actionTable[146][PLUS] = 122;
+	actionTable[146][MINUS] = 123;
 
 	//State: 147
-	actionTable[147][RIGHT_PARENTHESIS] = 153;
-	actionTable[147][COMMA] = 154;
+	actionTable[147][RIGHT_SQUARE] = -43;
+	actionTable[147][SEMI_COLON] = -43;
+	actionTable[147][RIGHT_PARENTHESIS] = -43;
+	actionTable[147][COMMA] = -43;
+	actionTable[147][AND] = -43;
+	actionTable[147][OR] = -43;
+	actionTable[147][LESS_THAN] = -43;
+	actionTable[147][GREATER_THAN] = -43;
+	actionTable[147][LESS_OR_EQUAL] = -43;
+	actionTable[147][GREATER_OR_EQUAL] = -43;
+	actionTable[147][EQUAL_EQUAL] = -43;
+	actionTable[147][NOT_EQUAL] = -43;
+	actionTable[147][PLUS] = 122;
+	actionTable[147][MINUS] = 123;
 
 	//State: 148
-	actionTable[148][RIGHT_PARENTHESIS] = -66;
-	actionTable[148][COMMA] = -66;
-	actionTable[148][AND] = 108;
-	actionTable[148][OR] = 109;
+	actionTable[148][RIGHT_SQUARE] = -45;
+	actionTable[148][SEMI_COLON] = -45;
+	actionTable[148][RIGHT_PARENTHESIS] = -45;
+	actionTable[148][COMMA] = -45;
+	actionTable[148][AND] = -45;
+	actionTable[148][OR] = -45;
+	actionTable[148][LESS_THAN] = -45;
+	actionTable[148][GREATER_THAN] = -45;
+	actionTable[148][LESS_OR_EQUAL] = -45;
+	actionTable[148][GREATER_OR_EQUAL] = -45;
+	actionTable[148][EQUAL_EQUAL] = -45;
+	actionTable[148][NOT_EQUAL] = -45;
+	actionTable[148][PLUS] = -45;
+	actionTable[148][MINUS] = -45;
+	actionTable[148][TIMES] = 124;
+	actionTable[148][DIVIDE] = 125;
 
 	//State: 149
-	actionTable[149][LEFT_BRACES] = -23;
-	actionTable[149][VAR] = -23;
-	actionTable[149][IF] = -23;
-	actionTable[149][WHILE] = -23;
-	actionTable[149][DO] = -23;
-	actionTable[149][BREAK] = -23;
-	actionTable[149][CONTINUE] = -23;
-	actionTable[149][RETURN] = -23;
-	actionTable[149][ID] = -23;
+	actionTable[149][RIGHT_SQUARE] = -46;
+	actionTable[149][SEMI_COLON] = -46;
+	actionTable[149][RIGHT_PARENTHESIS] = -46;
+	actionTable[149][COMMA] = -46;
+	actionTable[149][AND] = -46;
+	actionTable[149][OR] = -46;
+	actionTable[149][LESS_THAN] = -46;
+	actionTable[149][GREATER_THAN] = -46;
+	actionTable[149][LESS_OR_EQUAL] = -46;
+	actionTable[149][GREATER_OR_EQUAL] = -46;
+	actionTable[149][EQUAL_EQUAL] = -46;
+	actionTable[149][NOT_EQUAL] = -46;
+	actionTable[149][PLUS] = -46;
+	actionTable[149][MINUS] = -46;
+	actionTable[149][TIMES] = 124;
+	actionTable[149][DIVIDE] = 125;
 
 	//State: 150
-	actionTable[150][LEFT_BRACES] = -26;
-	actionTable[150][RIGHT_BRACES] = -26;
-	actionTable[150][IF] = -26;
-	actionTable[150][ELSE] = -26;
-	actionTable[150][WHILE] = -26;
-	actionTable[150][DO] = -26;
-	actionTable[150][BREAK] = -26;
-	actionTable[150][CONTINUE] = -26;
-	actionTable[150][RETURN] = -26;
-	actionTable[150][ID] = -26;
+	actionTable[150][RIGHT_SQUARE] = -48;
+	actionTable[150][SEMI_COLON] = -48;
+	actionTable[150][RIGHT_PARENTHESIS] = -48;
+	actionTable[150][COMMA] = -48;
+	actionTable[150][AND] = -48;
+	actionTable[150][OR] = -48;
+	actionTable[150][LESS_THAN] = -48;
+	actionTable[150][GREATER_THAN] = -48;
+	actionTable[150][LESS_OR_EQUAL] = -48;
+	actionTable[150][GREATER_OR_EQUAL] = -48;
+	actionTable[150][EQUAL_EQUAL] = -48;
+	actionTable[150][NOT_EQUAL] = -48;
+	actionTable[150][PLUS] = -48;
+	actionTable[150][MINUS] = -48;
+	actionTable[150][TIMES] = -48;
+	actionTable[150][DIVIDE] = -48;
 
 	//State: 151
-	actionTable[151][LEFT_BRACES] = -28;
-	actionTable[151][RIGHT_BRACES] = -28;
-	actionTable[151][IF] = -28;
-	actionTable[151][ELSE] = -28;
-	actionTable[151][WHILE] = -28;
-	actionTable[151][DO] = -28;
-	actionTable[151][BREAK] = -28;
-	actionTable[151][CONTINUE] = -28;
-	actionTable[151][RETURN] = -28;
-	actionTable[151][ID] = -28;
+	actionTable[151][RIGHT_SQUARE] = -49;
+	actionTable[151][SEMI_COLON] = -49;
+	actionTable[151][RIGHT_PARENTHESIS] = -49;
+	actionTable[151][COMMA] = -49;
+	actionTable[151][AND] = -49;
+	actionTable[151][OR] = -49;
+	actionTable[151][LESS_THAN] = -49;
+	actionTable[151][GREATER_THAN] = -49;
+	actionTable[151][LESS_OR_EQUAL] = -49;
+	actionTable[151][GREATER_OR_EQUAL] = -49;
+	actionTable[151][EQUAL_EQUAL] = -49;
+	actionTable[151][NOT_EQUAL] = -49;
+	actionTable[151][PLUS] = -49;
+	actionTable[151][MINUS] = -49;
+	actionTable[151][TIMES] = -49;
+	actionTable[151][DIVIDE] = -49;
 
 	//State: 152
-	actionTable[152][RIGHT_PARENTHESIS] = 156;
-	actionTable[152][AND] = 108;
-	actionTable[152][OR] = 109;
+	actionTable[152][RIGHT_SQUARE] = -56;
+	actionTable[152][SEMI_COLON] = -56;
+	actionTable[152][RIGHT_PARENTHESIS] = -56;
+	actionTable[152][COMMA] = -56;
+	actionTable[152][AND] = -56;
+	actionTable[152][OR] = -56;
+	actionTable[152][LESS_THAN] = -56;
+	actionTable[152][GREATER_THAN] = -56;
+	actionTable[152][LESS_OR_EQUAL] = -56;
+	actionTable[152][GREATER_OR_EQUAL] = -56;
+	actionTable[152][EQUAL_EQUAL] = -56;
+	actionTable[152][NOT_EQUAL] = -56;
+	actionTable[152][PLUS] = -56;
+	actionTable[152][MINUS] = -56;
+	actionTable[152][TIMES] = -56;
+	actionTable[152][DIVIDE] = -56;
 
 	//State: 153
-	actionTable[153][RIGHT_SQUARE] = -57;
-	actionTable[153][SEMI_COLON] = -57;
-	actionTable[153][RIGHT_PARENTHESIS] = -57;
-	actionTable[153][COMMA] = -57;
-	actionTable[153][AND] = -57;
-	actionTable[153][OR] = -57;
-	actionTable[153][LESS_THAN] = -57;
-	actionTable[153][GREATER_THAN] = -57;
-	actionTable[153][LESS_OR_EQUAL] = -57;
-	actionTable[153][GREATER_OR_EQUAL] = -57;
-	actionTable[153][EQUAL_EQUAL] = -57;
-	actionTable[153][EQUALS] = -57;
-	actionTable[153][PLUS] = -57;
-	actionTable[153][MINUS] = -57;
-	actionTable[153][TIMES] = -57;
-	actionTable[153][DIVIDE] = -57;
+	actionTable[153][LEFT_PARENTHESIS] = 92;
+	actionTable[153][MINUS] = 94;
+	actionTable[153][PLUS_PLUS] = 90;
+	actionTable[153][MINUS_MINUS] = 91;
+	actionTable[153][NOT] = 95;
+	actionTable[153][TRUE] = 101;
+	actionTable[153][FALSE] = 102;
+	actionTable[153][CHARACTER] = 103;
+	actionTable[153][STRINGVAL] = 104;
+	actionTable[153][NUMERAL] = 31;
+	actionTable[153][ID] = 22;
+	actionTable[153][E] = 160;
+	actionTable[153][L] = 85;
+	actionTable[153][R] = 86;
+	actionTable[153][Y] = 87;
+	actionTable[153][F] = 88;
+	actionTable[153][LE] = 159;
+	actionTable[153][LV] = 89;
+	actionTable[153][TRU] = 96;
+	actionTable[153][FALS] = 97;
+	actionTable[153][CH] = 98;
+	actionTable[153][ST] = 99;
+	actionTable[153][NU] = 100;
+	actionTable[153][IDU] = 93;
 
 	//State: 154
-	actionTable[154][LEFT_PARENTHESIS] = 87;
-	actionTable[154][MINUS] = 89;
-	actionTable[154][PLUS_PLUS] = 85;
-	actionTable[154][MINUS_MINUS] = 86;
-	actionTable[154][NOT] = 90;
-	actionTable[154][ID] = 9;
-	actionTable[154][TRUE] = 96;
-	actionTable[154][FALSE] = 97;
-	actionTable[154][CHARACTER] = 98;
-	actionTable[154][STRINGVAL] = 99;
-	actionTable[154][NUMERAL] = 32;
-	actionTable[154][E] = 157;
-	actionTable[154][L] = 80;
-	actionTable[154][R] = 81;
-	actionTable[154][Y] = 82;
-	actionTable[154][F] = 83;
-	actionTable[154][LV] = 84;
-	actionTable[154][IDT] = 88;
-	actionTable[154][TRU] = 91;
-	actionTable[154][FALS] = 92;
-	actionTable[154][CH] = 93;
-	actionTable[154][ST] = 94;
-	actionTable[154][NU] = 95
-	;
+	actionTable[154][TYPE] = -23;
+	actionTable[154][LEFT_BRACES] = -23;
+	actionTable[154][RIGHT_BRACES] = -23;
+	actionTable[154][FUNCTION] = -23;
+	actionTable[154][VAR] = -23;
+	actionTable[154][IF] = -23;
+	actionTable[154][ELSE] = -23;
+	actionTable[154][WHILE] = -23;
+	actionTable[154][DO] = -23;
+	actionTable[154][BREAK] = -23;
+	actionTable[154][CONTINUE] = -23;
+	actionTable[154][RETURN] = -23;
+	actionTable[154][ID] = -23;
+	actionTable[154][ENDFILE] = -23;
 
 	//State: 155
-	actionTable[155][LEFT_BRACES] = 44;
-	actionTable[155][IF] = 58;
-	actionTable[155][WHILE] = 59;
-	actionTable[155][DO] = 60;
-	actionTable[155][BREAK] = 63;
-	actionTable[155][CONTINUE] = 64;
-	actionTable[155][RETURN] = 65;
-	actionTable[155][ID] = 9;
-	actionTable[155][B] = 61;
-	actionTable[155][S] = 158;
-	actionTable[155][LV] = 62;
-	actionTable[155][IDT] = 66;
+	actionTable[155][LEFT_BRACES] = -78;
+	actionTable[155][IF] = 63;
+	actionTable[155][WHILE] = 64;
+	actionTable[155][DO] = 65;
+	actionTable[155][BREAK] = 68;
+	actionTable[155][CONTINUE] = 69;
+	actionTable[155][RETURN] = 70;
+	actionTable[155][ID] = 22;
+	actionTable[155][S] = 161;
+	actionTable[155][LV] = 67;
+	actionTable[155][IDU] = 71;
+	actionTable[155][NB] = 66;
 
 	//State: 156
-	actionTable[156][SEMI_COLON] = 159;
+	actionTable[156][LEFT_BRACES] = -84;
+	actionTable[156][RIGHT_BRACES] = -84;
+	actionTable[156][IF] = -84;
+	actionTable[156][ELSE] = -84;
+	actionTable[156][WHILE] = -84;
+	actionTable[156][DO] = -84;
+	actionTable[156][BREAK] = -84;
+	actionTable[156][CONTINUE] = -84;
+	actionTable[156][RETURN] = -84;
+	actionTable[156][ID] = -84;
+	actionTable[156][MT] = 162;
 
 	//State: 157
-	actionTable[157][RIGHT_PARENTHESIS] = -65;
-	actionTable[157][COMMA] = -65;
-	actionTable[157][AND] = 108;
-	actionTable[157][OR] = 109;
+	actionTable[157][LEFT_PARENTHESIS] = 92;
+	actionTable[157][MINUS] = 94;
+	actionTable[157][PLUS_PLUS] = 90;
+	actionTable[157][MINUS_MINUS] = 91;
+	actionTable[157][NOT] = 95;
+	actionTable[157][TRUE] = 101;
+	actionTable[157][FALSE] = 102;
+	actionTable[157][CHARACTER] = 103;
+	actionTable[157][STRINGVAL] = 104;
+	actionTable[157][NUMERAL] = 31;
+	actionTable[157][ID] = 22;
+	actionTable[157][E] = 163;
+	actionTable[157][L] = 85;
+	actionTable[157][R] = 86;
+	actionTable[157][Y] = 87;
+	actionTable[157][F] = 88;
+	actionTable[157][LV] = 89;
+	actionTable[157][TRU] = 96;
+	actionTable[157][FALS] = 97;
+	actionTable[157][CH] = 98;
+	actionTable[157][ST] = 99;
+	actionTable[157][NU] = 100;
+	actionTable[157][IDU] = 93;
 
 	//State: 158
-	actionTable[158][LEFT_BRACES] = -27;
-	actionTable[158][RIGHT_BRACES] = -27;
-	actionTable[158][IF] = -27;
-	actionTable[158][ELSE] = -27;
-	actionTable[158][WHILE] = -27;
-	actionTable[158][DO] = -27;
-	actionTable[158][BREAK] = -27;
-	actionTable[158][CONTINUE] = -27;
-	actionTable[158][RETURN] = -27;
-	actionTable[158][ID] = -27;
+	actionTable[158][LEFT_BRACES] = -31;
+	actionTable[158][RIGHT_BRACES] = -31;
+	actionTable[158][IF] = -31;
+	actionTable[158][ELSE] = -31;
+	actionTable[158][WHILE] = -31;
+	actionTable[158][DO] = -31;
+	actionTable[158][BREAK] = -31;
+	actionTable[158][CONTINUE] = -31;
+	actionTable[158][RETURN] = -31;
+	actionTable[158][ID] = -31;
 
 	//State: 159
-	actionTable[159][LEFT_BRACES] = -29;
-	actionTable[159][RIGHT_BRACES] = -29;
-	actionTable[159][IF] = -29;
-	actionTable[159][ELSE] = -29;
-	actionTable[159][WHILE] = -29;
-	actionTable[159][DO] = -29;
-	actionTable[159][BREAK] = -29;
-	actionTable[159][CONTINUE] = -29;
-	actionTable[159][RETURN] = -29;
-	actionTable[159][ID] = -29;
+	actionTable[159][RIGHT_PARENTHESIS] = 164;
+	actionTable[159][COMMA] = 165;
 
+	//State: 160
+	actionTable[160][RIGHT_PARENTHESIS] = -66;
+	actionTable[160][COMMA] = -66;
+	actionTable[160][AND] = 114;
+	actionTable[160][OR] = 115;
+
+	//State: 161
+	actionTable[161][LEFT_BRACES] = -26;
+	actionTable[161][RIGHT_BRACES] = -26;
+	actionTable[161][IF] = -26;
+	actionTable[161][ELSE] = -26;
+	actionTable[161][WHILE] = -26;
+	actionTable[161][DO] = -26;
+	actionTable[161][BREAK] = -26;
+	actionTable[161][CONTINUE] = -26;
+	actionTable[161][RETURN] = -26;
+	actionTable[161][ID] = -26;
+
+	//State: 162
+	actionTable[162][LEFT_BRACES] = -78;
+	actionTable[162][IF] = 63;
+	actionTable[162][WHILE] = 64;
+	actionTable[162][DO] = 65;
+	actionTable[162][BREAK] = 68;
+	actionTable[162][CONTINUE] = 69;
+	actionTable[162][RETURN] = 70;
+	actionTable[162][ID] = 22;
+	actionTable[162][S] = 167;
+	actionTable[162][LV] = 67;
+	actionTable[162][IDU] = 71;
+	actionTable[162][NB] = 66;
+
+	//State: 163
+	actionTable[163][RIGHT_PARENTHESIS] = 168;
+	actionTable[163][AND] = 114;
+	actionTable[163][OR] = 115;
+
+	//State: 164
+	actionTable[164][RIGHT_SQUARE] = -57;
+	actionTable[164][SEMI_COLON] = -57;
+	actionTable[164][RIGHT_PARENTHESIS] = -57;
+	actionTable[164][COMMA] = -57;
+	actionTable[164][AND] = -57;
+	actionTable[164][OR] = -57;
+	actionTable[164][LESS_THAN] = -57;
+	actionTable[164][GREATER_THAN] = -57;
+	actionTable[164][LESS_OR_EQUAL] = -57;
+	actionTable[164][GREATER_OR_EQUAL] = -57;
+	actionTable[164][EQUAL_EQUAL] = -57;
+	actionTable[164][NOT_EQUAL] = -57;
+	actionTable[164][PLUS] = -57;
+	actionTable[164][MINUS] = -57;
+	actionTable[164][TIMES] = -57;
+	actionTable[164][DIVIDE] = -57;
+
+	//State: 165
+	actionTable[165][LEFT_PARENTHESIS] = 92;
+	actionTable[165][MINUS] = 94;
+	actionTable[165][PLUS_PLUS] = 90;
+	actionTable[165][MINUS_MINUS] = 91;
+	actionTable[165][NOT] = 95;
+	actionTable[165][TRUE] = 101;
+	actionTable[165][FALSE] = 102;
+	actionTable[165][CHARACTER] = 103;
+	actionTable[165][STRINGVAL] = 104;
+	actionTable[165][NUMERAL] = 31;
+	actionTable[165][ID] = 22;
+	actionTable[165][E] = 169;
+	actionTable[165][L] = 85;
+	actionTable[165][R] = 86;
+	actionTable[165][Y] = 87;
+	actionTable[165][F] = 88;
+	actionTable[165][LV] = 89;
+	actionTable[165][TRU] = 96;
+	actionTable[165][FALS] = 97;
+	actionTable[165][CH] = 98;
+	actionTable[165][ST] = 99;
+	actionTable[165][NU] = 100;
+	actionTable[165][IDU] = 93;
+
+	//State: 166
+	actionTable[166][LEFT_BRACES] = -81;
+	actionTable[166][RIGHT_BRACES] = -81;
+	actionTable[166][IF] = -81;
+	actionTable[166][ELSE] = -81;
+	actionTable[166][WHILE] = -81;
+	actionTable[166][DO] = -81;
+	actionTable[166][BREAK] = -81;
+	actionTable[166][CONTINUE] = -81;
+	actionTable[166][RETURN] = -81;
+	actionTable[166][ID] = -81;
+	actionTable[166][ME] = 170;
+
+	//State: 167
+	actionTable[167][LEFT_BRACES] = -28;
+	actionTable[167][RIGHT_BRACES] = -28;
+	actionTable[167][IF] = -28;
+	actionTable[167][ELSE] = -28;
+	actionTable[167][WHILE] = -28;
+	actionTable[167][DO] = -28;
+	actionTable[167][BREAK] = -28;
+	actionTable[167][CONTINUE] = -28;
+	actionTable[167][RETURN] = -28;
+	actionTable[167][ID] = -28;
+
+	//State: 168
+	actionTable[168][SEMI_COLON] = 171;
+
+	//State: 169
+	actionTable[169][RIGHT_PARENTHESIS] = -65;
+	actionTable[169][COMMA] = -65;
+	actionTable[169][AND] = 114;
+	actionTable[169][OR] = 115;
+
+	//State: 170
+	actionTable[170][LEFT_BRACES] = -78;
+	actionTable[170][IF] = 63;
+	actionTable[170][WHILE] = 64;
+	actionTable[170][DO] = 65;
+	actionTable[170][BREAK] = 68;
+	actionTable[170][CONTINUE] = 69;
+	actionTable[170][RETURN] = 70;
+	actionTable[170][ID] = 22;
+	actionTable[170][S] = 172;
+	actionTable[170][LV] = 67;
+	actionTable[170][IDU] = 71;
+	actionTable[170][NB] = 66;
+
+	//State: 171
+	actionTable[171][LEFT_BRACES] = -29;
+	actionTable[171][RIGHT_BRACES] = -29;
+	actionTable[171][IF] = -29;
+	actionTable[171][ELSE] = -29;
+	actionTable[171][WHILE] = -29;
+	actionTable[171][DO] = -29;
+	actionTable[171][BREAK] = -29;
+	actionTable[171][CONTINUE] = -29;
+	actionTable[171][RETURN] = -29;
+	actionTable[171][ID] = -29;
+
+	//State: 172
+	actionTable[172][LEFT_BRACES] = -27;
+	actionTable[172][RIGHT_BRACES] = -27;
+	actionTable[172][IF] = -27;
+	actionTable[172][ELSE] = -27;
+	actionTable[172][WHILE] = -27;
+	actionTable[172][DO] = -27;
+	actionTable[172][BREAK] = -27;
+	actionTable[172][CONTINUE] = -27;
+	actionTable[172][RETURN] = -27;
+	actionTable[172][ID] = -27;
 }
 
-void throwSyntaxError(){
-	cout << "[!] Erro de sintaxe na linha: " << currentLine << endl;
-	exit(1);
+
+void getToken(int &token, int &tokenSecundario){
+	token_struct t;
+	t = nextToken();
+	token = t.token;
+	if (t.tokenSecundario != -1){
+		tokenSecundario = t.tokenSecundario;
+	}
 }
 
 void parse(){
-	int q = 0;
-	token_struct t;
+	int q = 0, token;
+	static int tokenSecundario = -1;
 	initializeTerminalNames();
 	initializeReservedWordMap();
 	build_rule_vector();
 	build_action_table();
 	states.push(q);
-	t = nextToken();
+	getToken(token,tokenSecundario);
 	do{
-		cout << "[!] Current State : "  << q << " - Token: " << t_terminalNames[t.token] << " - On Table : " << actionTable[q][t.token] << endl;;
-			if(actionTable[q].count(t.token) < 1){
-					throwSyntaxError();
+		//cout << "[!] Current State : "  << q << " - Token: " << t_terminalNames[token_id] << " - On Table : " << actionTable[q][token_id] << endl;;
+			if(actionTable[q].count(token) < 1){
+					errorRoutines::throwSyntaxError();
 			}
 			else{
-					int p = actionTable[q][t.token];
+					int p = actionTable[q][token];
 					if(IS_SHIFT(p)){
 							states.push(p);
-							t = nextToken();
+							getToken(token,tokenSecundario);
 					}
 					else if(IS_REDUCTION(p)){
 							int r = RULE(p);
@@ -2076,12 +2240,20 @@ void parse(){
 									states.pop();
 							}
 							states.push(actionTable[states.top()][vec_rules[r].first]);
+							semantics(r,tokenSecundario);
 					}
 					else{
-							throwSyntaxError();
+							errorRoutines::throwSyntaxError();
 					}
 					q = states.top();
 			}
-	}while(q != ACC);
-	cout << "[+] No parsing errors found!" << endl;
+	} while(q != ACC);
+
+	if (errorRoutines::hasError){
+		cout << "[-] Parsing errors detected!" << endl;
+	}
+	else{
+		cout << "[+] No parsing errors detected!" << endl;
+
+	}
 }

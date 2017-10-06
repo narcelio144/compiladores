@@ -1,5 +1,5 @@
-#include "analisador_lexico.h"
-#include "analisador_sintatico.h"
+#include "analisador_lexico.hpp"
+#include "analisador_sintatico.hpp"
 
 //Definição da variável global de entrada
 ifstream inputFile;

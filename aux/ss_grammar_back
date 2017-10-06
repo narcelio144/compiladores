@@ -1,0 +1,76 @@
+P -> LDE
+LDE -> LDE DE
+LDE -> DE
+DE -> DF
+DE -> DT
+T -> 'integer'
+T -> 'char'
+T -> 'boolean'
+T -> 'string'
+T -> IDT
+DT -> 'type' IDT '=' 'array' '[' NU ']' 'of' T
+DT -> 'type' IDT '=' 'struct' '{' DC '}'
+DT -> 'type' IDT '=' T
+DC -> DC ';' LI ':' T
+DC -> LI ':' T
+DF -> 'function' IDT '(' LP ')' ':' T B
+LP -> LP ',' IDT ':' T
+LP -> IDT ':' T
+B -> '{' LDV LS '}'
+LDV -> LDV DV
+LDV -> DV
+LS -> LS S
+LS -> S
+DV -> 'var' LI ':' T ';'
+LI -> LI ',' IDT
+LI -> IDT
+S -> 'if' '(' E ')' S
+S -> 'if' '(' E ')' S 'else' S
+S -> 'while' '(' E ')' S
+S -> 'do' S 'while' '(' E ')' ';'
+S -> B
+S -> LV '=' E ';'
+S -> 'break' ';'
+S -> 'continue' ';'
+S -> 'return' E ';'
+E -> E '&&' L
+E -> E '||' L
+E -> L
+L -> L '<' R
+L -> L '>' R
+L -> L '<=' R
+L -> L '>=' R
+L -> L '==' R
+L -> L '!=' R
+L -> R
+R -> R '+' Y
+R -> R '-' Y
+R -> Y
+Y -> Y '*' F
+Y -> Y '/' F
+Y -> F
+F -> LV
+F -> '++' LV
+F -> '--' LV
+F -> LV '++'
+F -> LV '--'
+F -> '(' E ')'
+F -> IDT '(' LE ')'
+F -> '-' F
+F -> '!' F
+F -> TRU
+F -> FALS
+F -> CH
+F -> ST
+F -> NU
+LE -> LE ',' E
+LE -> E
+LV -> LV '.' IDT
+LV -> LV '[' E ']'
+LV -> IDT
+IDT ->'Id'
+TRU -> 'true'
+FALS -> 'false'
+CH -> 'c'
+ST -> 's'
+NU -> 'n'
