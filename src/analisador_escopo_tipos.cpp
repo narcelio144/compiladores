@@ -62,37 +62,55 @@ void semantics (int rule, int tokenSecundario){
 	static int name,n,l,l1,l2;
 	static int currentLevel = 0;
   static listObject *p,*t,*f;
-	static t_attrib IDD_,IDU_,IDT_;
+	static t_attrib _IDD,_IDU,_IDT,_T;
 	switch (rule){
 
 		case IDD_RULE:
 			name = tokenSecundario;
-      IDD_.nont = IDD;
-      IDD_._.IDT.name = name;
+      _IDD.nont = IDD;
+      _IDD._.IDT.name = name;
       if( (p = search(name,currentLevel)) != nullptr){
       	errorRoutines::throwError(ERR_REDCL);
       } else{
 			    p = define(name,currentLevel);
       }
-			IDD_._.IDT.obj = p;
+			p->eKind = NO_KIND_DEF_;
+			_IDD._.IDT.obj = p;
 			break;
 
 		case IDU_RULE:
 			name = tokenSecundario;
-			IDU_.nont = IDU;
-			IDU_._.IDT.name = name;
+			_IDU.nont = IDU;
+			_IDU._.IDT.name = name;
 			if((p = find(name,currentLevel)) == nullptr){
 				errorRoutines::throwError(ERR_NO_DECL);
 				p = define(name,currentLevel);
 			}
-			IDU_._.IDT.obj = p;
+			_IDU._.IDT.obj = p;
 			break;
 
 		case IDT_RULE:
 			name = tokenSecundario;
-			IDT_.nont = IDT;
-			IDT_._.IDT.name = name;
-			IDT_._.IDT.obj = nullptr;
+			_IDT.nont = IDT;
+			_IDT._.IDT.name = name;
+			_IDT._.IDT.obj = nullptr;
+			break;
+
+		case T_INTEGER_RULE:
+			_T._.T.type = pInt;
+			semanticStack.push(_T);
+			break;
+		case T_CHAR_RULE:
+			_T._.T.type = pChar;
+			semanticStack.push(_T);
+			break;;
+		case T_STRINGVAL_RULE:
+			_T._.T.type = pString;
+			semanticStack.push(_T);
+			break;
+		case T_BOOLEAN_RULE:
+			_T._.T.type = pBool;
+			semanticStack.push(_T);
 			break;
 
 		case DF_RULE:
