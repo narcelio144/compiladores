@@ -21,5 +21,6 @@ int endBlock(int &currentLevel);
 listObject* define(int name,int currentLevel);
 listObject* search(int name,int currentLevel);
 listObject* find(int name,int currentLevel);
+void initializeAttribuites(attributes &attr,bool &attributesInitialized);
 
 #endif

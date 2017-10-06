@@ -243,4 +243,7 @@ typedef struct {
     }_;
 } t_attrib;
 
+typedef struct{
+	t_attrib _IDD,_IDU,_IDT,_T,_LI,_LI0,_LI1,_TRU,_FALS,_ST,_CH,_NU,_DC,_DC0,_DC1,_LP,_LP0,_LP1,_E,_E0,_E1,_L,_L0,_L1,_R,_R0,_R1,_Y,_Y0,_Y1,_F,_F0,_F1,_LV,_LV0,_LV1,_LE,_LE0,_LE1,_MC,_MT,_ME,_MW;
+} attributes;
 #endif

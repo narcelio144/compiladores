@@ -39,11 +39,11 @@ bool checkTypes(listObject *t1, listObject *t2){
 			if( t1->_.Array.nNumElems ==t2->_.Array.nNumElems ){
 				return checkTypes(t1->_.Array.pElemType,t2->_.Array.pElemType);
 			}
-		}
 		else if( t1->eKind == STRUCT_TYPE_ ){
+		}
 			listObject *f1 = t1->_.Struct.pFields;
 			listObject *f2 = t2->_.Struct.pFields;
-			while( f1 != NULL && f2 != NULL ){
+			while( f1 != nullptr && f2 != nullptr ){
 				if( !checkTypes(f1->_.Field.pType,f2->_.Field.pType) )
 					return false;
 
@@ -52,65 +52,111 @@ bool checkTypes(listObject *t1, listObject *t2){
 				f2 = f2->pNext;
 
 			}
-		return ( f1 == NULL && f2 == NULL );
+		return ( f1 == nullptr && f2 == nullptr );
 		}
 	}
 	return false;
+}
+void initializeAttribuites(attributes &attr, bool &attributesInitialized){
+	attr._IDD.nont = IDD;
+	attr._IDU.nont = IDU;
+	attr._IDT.nont = IDT;
+	attr._T.nont = T;
+	attr._LI.nont = LI;
+	attr._LI0.nont = LI;
+	attr._LI1.nont = LI;
+	attr._TRU.nont = TRU;
+	attr._FALS.nont = FALS;
+	attr._ST.nont = ST;
+	attr._CH.nont = CH;
+	attr._NU.nont = NU;
+	attr._DC.nont = DC;
+	attr._DC0.nont = DC;
+	attr._DC1.nont = DC;
+	attr._LP.nont = LP;
+	attr._LP0.nont = LP;
+	attr._LP1.nont = LP;
+	attr._E.nont = E;
+	attr._E0.nont = E;
+	attr._E1.nont = E;
+	attr._L.nont = L;
+	attr._L0.nont = L;
+	attr._L1.nont = L;
+	attr._R.nont = R;
+	attr._R0.nont = R;
+	attr._R1.nont = R;
+	attr._Y.nont = Y;
+	attr._Y0.nont = Y;
+	attr._Y1.nont = Y;
+	attr._F.nont = F;
+	attr._F0.nont = F;
+	attr._F1.nont = F;
+	attr._LV.nont = LV;
+	attr._LV0.nont = LV;
+	attr._LV1.nont = LV;
+	attr._LE.nont = LE;
+	attr._LE0.nont = LE;
+	attr._LE1.nont = LE;
+	attr._MC.nont = MC;
+	attr._MT.nont = MT;
+	attr._ME.nont = ME;
+	attr._MW.nont = MW;
+	attributesInitialized = true;
 }
 
 void semantics (int rule, int tokenSecundario){
 	static int name,n,l,l1,l2;
 	static int currentLevel = 0;
-  static listObject *p,*t,*f;
-	static t_attrib _IDD,_IDU,_IDT,_T;
-	switch (rule){
+	static listObject *p,*t,*f;
+	static bool attributesInitialized = false;
+	static attributes attr;
+	if (!attributesInitialized)
+		initializeAttribuites(attr,attributesInitialized);
 
+	switch (rule){
 		case IDD_RULE:
 			name = tokenSecundario;
-      _IDD.nont = IDD;
-      _IDD._.IDT.name = name;
+      attr._IDD._.IDT.name = name;
       if( (p = search(name,currentLevel)) != nullptr){
       	errorRoutines::throwError(ERR_REDCL);
       } else{
 			    p = define(name,currentLevel);
       }
 			p->eKind = NO_KIND_DEF_;
-			_IDD._.IDT.obj = p;
+			attr._IDD._.IDT.obj = p;
 			break;
 
 		case IDU_RULE:
 			name = tokenSecundario;
-			_IDU.nont = IDU;
-			_IDU._.IDT.name = name;
+			attr._IDU._.IDT.name = name;
 			if((p = find(name,currentLevel)) == nullptr){
 				errorRoutines::throwError(ERR_NO_DECL);
 				p = define(name,currentLevel);
 			}
-			_IDU._.IDT.obj = p;
+			attr._IDU._.IDT.obj = p;
 			break;
 
 		case IDT_RULE:
 			name = tokenSecundario;
-			_IDT.nont = IDT;
-			_IDT._.IDT.name = name;
-			_IDT._.IDT.obj = nullptr;
+			attr._IDT._.IDT.name = name;
+			attr._IDT._.IDT.obj = nullptr;
 			break;
 
 		case T_INTEGER_RULE:
-			_T._.T.type = pInt;
-			semanticStack.push(_T);
+			attr._T._.T.type = pInt;
+			semanticStack.push(attr._T);
 			break;
 		case T_CHAR_RULE:
-			_T._.T.type = pChar;
-			semanticStack.push(_T);
+			attr._T._.T.type = pChar;
+			semanticStack.push(attr._T);
 			break;;
 		case T_STRINGVAL_RULE:
-			_T._.T.type = pString;
-			semanticStack.push(_T);
+			attr._T._.T.type = pString;
+			semanticStack.push(attr._T);
 			break;
 		case T_BOOLEAN_RULE:
-			_T._.T.type = pBool;
-			semanticStack.push(_T);
+			attr._T._.T.type = pBool;
+			semanticStack.push(attr._T);
 			break;
 
 		case DF_RULE:
