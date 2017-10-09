@@ -110,6 +110,7 @@ void semantics (int rule, int tokenSecundario){
 	static listObject *p,*t,*f;
 	static bool attributesInitialized = false;
 	static attributes attr;
+	static listObject *t1, *t2;
 	if (!attributesInitialized)
 		initializeAttribuites(attr,attributesInitialized);
 
@@ -179,7 +180,7 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		case LI_REC_RULE:
-			attr._LI0._.LI.list = attr._LI1.list; //deveria ser LI0.list=LI1.list;
+			attr._LI0._.LI.list = attr._LI1._.LI.list; //deveria ser LI0.list=LI1.list;
 			semanticStack.push(attr._LI0);
 			break;
 		
@@ -189,8 +190,8 @@ void semantics (int rule, int tokenSecundario){
 			//tem que fazer algo com o n?
 
 			while(p!=nullptr && p->eKind == NO_KIND_DEF_){
-				P->eKind=VAR_;
-				p->attr._.Var.pType = t;
+				p->eKind=VAR_;
+				p->_.Var.pType = t;
 				p=p->pNext;
 			}
 			break;
@@ -239,7 +240,7 @@ void semantics (int rule, int tokenSecundario){
 			p=attr._IDD._.IDT.obj;// deveria ser p=IDD.obj;
 			t=attr._T._.T.type;
 			p->eKind=ALIAS_TYPE_;
-			p->attr._.Alias.pBaseType=t;
+			p->_.Alias.pBaseType=t;
 			break;
 		
 		//figura 6.10 
@@ -262,7 +263,7 @@ void semantics (int rule, int tokenSecundario){
 				p->_.Field.pType=t;
 				p=p->pNext;
 			}
-			attr._DC0._.DC0.list = attr._DC1._.DC1.list; // DC0.list = DC1.list
+			attr._DC0._.DC.list = attr._DC1._.DC.list; // DC0.list = DC1.list
 			break;
 
 		//figura6.11
@@ -291,7 +292,7 @@ void semantics (int rule, int tokenSecundario){
 			t=attr._T._.T.type;
 			p->eKind = PARAM_;
 			p->_.Param.pType=t;
-			attr._LP0._.LP0.list=attr._LP1._.LP1.list;
+			attr._LP0._.LP.list=attr._LP1._.LP.list;
 			break;
 
 		//figura 6.13
@@ -347,19 +348,19 @@ void semantics (int rule, int tokenSecundario){
 			break;
 		//figura 6.18
 		case E_AND_RULE:
-			if( !CheckTypes( attr._E1._.E.type, pBool ) )
+			if( !checkTypes( attr._E1._.E.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
-			if( !CheckTypes( attr._L._.L.type, pBool ) )
+			if( !checkTypes( attr._L._.L.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
-			attr._E0._.E0.type = pBool;
+			attr._E0._.E.type = pBool;
 			break;
 
 		case E_OR_RULE:
-			if( !CheckTypes( attr._E1._.E.type, pBool ) )
+			if( !checkTypes( attr._E1._.E.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
-			if( !CheckTypes( attr._L._.L.type, pBool ) )
+			if( !checkTypes( attr._L._.L.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
-			attr._E0._.E0.type = pBool;
+			attr._E0._.E.type = pBool;
 			break;
 
 		case E_L_RULE:
@@ -368,38 +369,38 @@ void semantics (int rule, int tokenSecundario){
 
 		//figura 6.19
 		case L_LESSTHAN_RULE:
-			if( !CheckTypes( attr._L1._.L1.type, attr._R._.R.type ) )
+			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			attr._L0._.L0.type = pBool;
+			attr._L0._.L.type = pBool;
 			break;
 		case L_GREATHERTHAN_RULE:
-			if( !CheckTypes( attr._L1._.L1.type, attr._R._.R.type ) )
+			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			attr._L0._.L0.type = pBool;
+			attr._L0._.L.type = pBool;
 			break;
 
 		case L_LESSOREQUAL_RULE:
-			if( !CheckTypes( attr._L1._.L1.type, attr._R._.R.type ) )
+			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			attr._L0._.L0.type = pBool;
+			attr._L0._.L.type = pBool;
 			break;
 
 		case L_GREATHEROREQUAL_RULE:
-			if( !CheckTypes( attr._L1._.L1.type, attr._R._.R.type ) )
+			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			attr._L0._.L0.type = pBool;
+			attr._L0._.L.type = pBool;
 			break;
 
 		case L_EQUALEQUAL_RULE:
-			if( !CheckTypes( attr._L1._.L1.type, attr._R._.R.type ) )
+			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			attr._L0._.L0.type = pBool;
+			attr._L0._.L.type = pBool;
 			break;
 
 		case L_NOTEQUAL_RULE:
-			if( !CheckTypes( attr._L1._.L1.type, attr._R._.R.type ) )
+			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			attr._L0._.L0.type = pBool;
+			attr._L0._.L.type = pBool;
 			break;
 
 		case L_R_RULE:
@@ -408,35 +409,35 @@ void semantics (int rule, int tokenSecundario){
 
 		//figura 6.20
 		case R_PLUS_RULE:
-			if( !CheckTypes( attr._R1._.R1.type, attr._Y._.Y.type ) )
+			if( !checkTypes( attr._R1._.R.type, attr._Y._.Y.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._R1._.R1.type, pInt ) && !CheckTypes( attr._R1._.R1.type, pString ))
+			if( !checkTypes( attr._R1._.R.type, pInt ) && !checkTypes( attr._R1._.R.type, pString ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._R0._.R0.type=attr._R1._.R1.type;
+			attr._R0._.R.type=attr._R1._.R.type;
 			break;
 		case R_MINUS_RULE:
-			if( !CheckTypes( attr._R1._.R1.type, attr._Y._.Y.type ) )
+			if( !checkTypes( attr._R1._.R.type, attr._Y._.Y.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._R1._.R1.type, pInt ))
+			if( !checkTypes( attr._R1._.R.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._R0._.R0.type=attr._R1._.R1.type;
+			attr._R0._.R.type=attr._R1._.R.type;
 			break;
 		case R_Y_RULE:
 			attr._R._.R.type=attr._Y._.Y.type;
 			break;
 		case Y_TIMES_RULE:
-			if( !CheckTypes( attr._Y1._.Y1.type, attr._F._.F.type ) )
+			if( !checkTypes( attr._Y1._.Y.type, attr._F._.F.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._Y1._.Y1.type, pInt ))
+			if( !checkTypes( attr._Y1._.Y.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._Y0._.Y0.type=attr._Y1._.Y1.type;
+			attr._Y0._.Y.type=attr._Y1._.Y.type;
 			break;
 		case Y_DIVIDE_RULE:
-			if( !CheckTypes( attr._Y1._.Y1.type, attr._F._.F.type ) )
+			if( !checkTypes( attr._Y1._.Y.type, attr._F._.F.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._Y1._.Y1.type, pInt ))
+			if( !checkTypes( attr._Y1._.Y.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._Y0._.Y0.type=attr._Y1._.Y1.type;
+			attr._Y0._.Y.type=attr._Y1._.Y.type;
 			break;
 		case Y_F_RULE:
 			attr._Y._.Y.type=attr._F._.F.type;
@@ -450,28 +451,28 @@ void semantics (int rule, int tokenSecundario){
 
 		case F_PLUSPLUS_LV_RULE:
 			t= attr._LV._.LV.type;
-			if( !CheckTypes( t, pInt ))
+			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
 			break;
 
 		case F_MINUSMINUS_LV_RULE:
 			t= attr._LV._.LV.type;
-			if( !CheckTypes( t, pInt ))
+			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
 			break;
 
 		case F_LV_PLUSPLUS_RULE:
 			t= attr._LV._.LV.type;
-			if( !CheckTypes( t, pInt ))
+			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
 			break;
 
 		case F_LV_MINUSMINUS_RULE:
 			t= attr._LV._.LV.type;
-			if( !CheckTypes( t, pInt ))
+			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
 			break;
@@ -481,17 +482,17 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		case F_MINUSF_RULE:
-			t= attr._F1._.F1.type;
-			if( !CheckTypes( t, pInt ))
+			t= attr._F1._.F.type;
+			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;	//nao seria F1.type??
 			break;
 
 		case F_NOTF_RULE:
-			t= attr._F1._.F1.type;
-			if( !CheckTypes( t, pInt ))
+			t= attr._F1._.F.type;
+			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._F0._.F0.type=pInt;	//nao seria F1.type??
+			attr._F0._.F.type=pInt;	//nao seria F1.type??
 			break;
 
 		case F_TRU_RULE:
@@ -516,11 +517,11 @@ void semantics (int rule, int tokenSecundario){
 
 		//figura 6.22
 		case LV_REC_RULE:
-			t=attr._LV1._.LV1.type;
+			t=attr._LV1._.LV.type;
 			if( t->eKind != STRUCT_TYPE_ ){
 				if( t->eKind != UNIVERSAL_ )
 					errorRoutines::throwError( ERR_KIND_NOT_STRUCT );
-				attr._LV0._.LV0.type = pUniversal;
+				attr._LV0._.LV.type = pUniversal;
 			}
 			else{
 				p = t->_.Struct.pFields;
@@ -531,28 +532,28 @@ void semantics (int rule, int tokenSecundario){
 				}
 				if( p == NULL ){
 					errorRoutines::throwError( ERR_FIELD_NOT_DECL );
-					attr._LV0._.LV0.type = pUniversal;
+					attr._LV0._.LV.type = pUniversal;
 				}
 				else{
-					LV0.type = p->_.Field.pType;
+					attr._LV0._.LV.type = p->_.Field.pType;
 				}
 			}
 			break;
 
 		case LV_SQUARES_E_USE:
-			t = attr._LV1._.LV1.type;
+			t = attr._LV1._.LV.type;
 			if( t == pString ){
-				attr._LV0._.LV0.type = pChar;
+				attr._LV0._.LV.type = pChar;
 			} 
 			else if( t->eKind != ARRAY_TYPE_ ){
 				if( t->eKind != UNIVERSAL_ )
 					errorRoutines::throwError( ERR_KIND_NOT_ARRAY );
-				attr._LV0._.LV0.type = pUniversal;
+				attr._LV0._.LV.type = pUniversal;
 			} 
 			else {
-				attr._LV0._.LV0.type = t->_.Array.pElemType;
+				attr._LV0._.LV.type = t->_.Array.pElemType;
 			}
-			if( !CheckTypes( E.type, pInt ) )
+			if( !checkTypes( attr._E._.E.type, pInt ) )
 				errorRoutines::throwError( ERR_INVALID_INDEX_TYPE );
 			break;
 
@@ -569,7 +570,7 @@ void semantics (int rule, int tokenSecundario){
 		//figura 6.23
 
 		case MC_RULE:
-			attr._IDU = semanticStack.Top(); //nao tenho certeza se eh assim msm
+			attr._IDU = semanticStack.top(); //nao tenho certeza se eh assim msm
 			f = attr._IDU._.IDU.obj;
 			if( f->eKind != FUNCTION_ ){
 				errorRoutines::throwError( ERR_KIND_NOT_FUNC );
@@ -586,50 +587,51 @@ void semantics (int rule, int tokenSecundario){
 
 		case LE_E_RULE:
 			attr._E = semanticStack.top(); //nao tenho certeza se eh assim msm
-			semanticStack.pop()
+			semanticStack.pop();
 			attr._MC = semanticStack.top(); // idem sem certeza
 			attr._LE._.LE.param = NULL;
-			attr._LE._.LE.err = MC.err;
+			attr._LE._.LE.err = attr._MC._.MC.err;
 			n = 1;
 			if(!attr._MC._.MC.err){
-				p = MC.param;
+				p = attr._MC._.MC.param;
 				if( p == NULL ){
 					errorRoutines::throwError(ERR_TOO_MANY_ARGS);
-					LE.err = true;
+					attr._LE._.LE.err = true;
 				}
 				else{
-					if( !CheckTypes(p->_.Param.pType,E.type ) ){
+					if( !checkTypes(p->_.Param.pType,attr._E._.E.type ) ){
 						errorRoutines::throwError( ERR_PARAM_TYPE, n);
 					}
-					LE.param = p->pNext;
-					LE.n = n+1;
+					attr._LE._.LE.param = p->pNext;
+					attr._LE._.LE.n = n+1;
 				}
 			}
 			break;
 
 		case LE_REC_RULE:
-			attr._LE0._.LE0.param = nullptr;
-			attr._LE0._.LE0.err = LE1.err;
-			n = attr._LE1._.LE1.n;
-			if( !attr._LE1._.LE1.err ){
+			attr._LE0._.LE.param = nullptr;
+			attr._LE0._.LE.err = attr._LE1._.LE.err;
+			n = attr._LE1._.LE.n;
+			if( !attr._LE1._.LE.err ){
 				p = attr._LE._.LE.param;
 				if( p == NULL ){
 						errorRoutines::throwError(ERR_TOO_MANY_ARGS);
-						attr._LE0._.LE0.err = true;
+						attr._LE0._.LE.err = true;
 				}
 				else{
-				if( !CheckTypes(p->_.Param.pType,E.type ) ){
+				if( !checkTypes(p->_.Param.pType,attr._E._.E.type ) ){
 					errorRoutines::throwError(ERR_PARAM_TYPE, n);
 				}
-				attr._LE0._.LE0.param = p->pNext;
-				attr._LE0._.LE0.n = n+1;
+				attr._LE0._.LE.param = p->pNext;
+				attr._LE0._.LE.n = n+1;
+				}
 			}
 			break;
 
 		case F_FUNCTIONUSE_RULE:
 			attr._F._.F.type = attr._MC._.MC.type;
 			if(!attr._MC._.MC.err){
-				if( LE.param != NULL )
+				if( attr._LE._.LE.param != NULL )
 					errorRoutines::throwError( ERR_TOO_FEW_ARGS );
 			}
 			break;
