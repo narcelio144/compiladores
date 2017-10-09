@@ -105,12 +105,12 @@ void initializeAttribuites(attributes &attr, bool &attributesInitialized){
 }
 
 void semantics (int rule, int tokenSecundario){
+	cout << "Rule: " << rule << endl;
 	static int name,n,l,l1,l2;
 	static int currentLevel = 0;
-	static listObject *p,*t,*f;
+	static listObject *p,*t,*f,*curFunction,*t1,*t2;
 	static bool attributesInitialized = false;
 	static attributes attr;
-	static listObject *t1, *t2;
 	if (!attributesInitialized)
 		initializeAttribuites(attr,attributesInitialized);
 
@@ -125,6 +125,7 @@ void semantics (int rule, int tokenSecundario){
       		}
 			p->eKind = NO_KIND_DEF_;
 			attr._IDD._.IDT.obj = p;
+			semanticStack.push(attr._IDD);
 			break;
 
 		case IDU_RULE:
@@ -135,12 +136,14 @@ void semantics (int rule, int tokenSecundario){
 				p = define(name,currentLevel);
 			}
 			attr._IDU._.IDT.obj = p;
+			semanticStack.push(attr._IDU);
 			break;
 
 		case IDT_RULE:
 			name = tokenSecundario;
 			attr._IDT._.IDT.name = name;
 			attr._IDT._.IDT.obj = nullptr;
+			semanticStack.push(attr._IDT);
 			break;
 
 		case T_INTEGER_RULE:
@@ -164,30 +167,42 @@ void semantics (int rule, int tokenSecundario){
 
 		// Figura 6.5
 		case T_IDU_RULE:
-			p= attr._IDU._.IDT.obj; //nao tenho certeza que eh assim, pelo slide eh IDU.obj;
+			attr._IDU = semanticStack.top();
+			semanticStack.pop();
+			p= attr._IDU._.IDT.obj;
 			if (IS_TYPE_KIND(p->eKind) || p->eKind == UNIVERSAL_){
 				attr._T._.T.type = p;
 			} else {
 				attr._T._.T.type = pUniversal;
 				errorRoutines::throwError(ERR_TYPE_EXPECTED);
 			}
+			semanticStack.push(attr._T);
 			break;
 		
 		// Figura 6.6
 		case LI_IDD_RULE:
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
 			attr._LI._.LI.list = attr._IDD._.IDT.obj;
 			semanticStack.push(attr._LI);
 			break;
 
 		case LI_REC_RULE:
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
+			attr._LI1 = semanticStack.top();
+			semanticStack.pop();
 			attr._LI0._.LI.list = attr._LI1._.LI.list; //deveria ser LI0.list=LI1.list;
 			semanticStack.push(attr._LI0);
 			break;
 		
 		case DV_RULE:
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._LI = semanticStack.top();
+			semanticStack.pop();
 			p=attr._LI._.LI.list;
 			t=attr._T._.T.type;
-			//tem que fazer algo com o n?
 
 			while(p!=nullptr && p->eKind == NO_KIND_DEF_){
 				p->eKind=VAR_;
@@ -200,51 +215,77 @@ void semantics (int rule, int tokenSecundario){
 		case TRU_TRUE_RULE:
 			attr._TRU._.TRU.type = pBool;
 			attr._TRU._.TRU.val = true;
+			semanticStack.push(attr._TRU);
 			break;
 
 		case FALS_FALSE_USE:
 			attr._FALS._.FALS.type = pBool;
 			attr._FALS._.FALS.val = false;
+			semanticStack.push(attr._FALS);
 			break;
 
 		case CH_CHARACTER_RULE:
 			attr._CH._.CH.type = pChar;
 			attr._CH._.CH.pos = tokenSecundario;
 			attr._CH._.CH.val = getCharConst(attr._CH._.CH.pos);
+			semanticStack.push(attr._CH);
 			break;
 		
 		case ST_STRINGVAL_RULE:
 			attr._ST._.ST.type = pString;
 			attr._ST._.ST.pos = tokenSecundario;
 			attr._ST._.ST.val = getStringConst(attr._ST._.ST.pos);
+			semanticStack.push(attr._ST);
 			break;
 
 		case NU_NUMERAL_RULE:
 			attr._NU._.NU.type = pString;
 			attr._NU._.NU.pos = tokenSecundario;
 			attr._NU._.NU.val = getIntConst(attr._NU._.NU.pos);
+			semanticStack.push(attr._NU);
 			break;
 
 		//figura 6.8
 		case DT_ARRAY_RULE:
-			p=attr._IDD._.IDT.obj; // deveria ser p=IDD.obj;
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._NU = semanticStack.top();
+			semanticStack.pop();
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
+
+			p=attr._IDD._.IDT.obj; 
 			n=attr._NU._.NU.val;
 			t=attr._T._.T.type;
+			
 			p->eKind=ARRAY_TYPE_;
-			p->_.Array.nNumElems = n; //deveria ser p->_.Array.nNumElems = n;
-			p->_.Array.pElemType = t;	
+			p->_.Array.nNumElems = n;
+			p->_.Array.pElemType = t;
+			p->_.Array.nSize = n * attr._T.nSize;
 			break;
 
 		//figura 6.9
 		case DT_ALIAS_RULE:
-			p=attr._IDD._.IDT.obj;// deveria ser p=IDD.obj;
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
+
+			p=attr._IDD._.IDT.obj;
 			t=attr._T._.T.type;
+
 			p->eKind=ALIAS_TYPE_;
 			p->_.Alias.pBaseType=t;
+			p->_.Alias.nSize = attr._T.nSize;
 			break;
 		
+
 		//figura 6.10 
 		case DC_LI_RULE:
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._LI = semanticStack.top();
+			semanticStack.pop();
 			p=attr._LI._.LI.list;
 			t=attr._T._.T.type;
 			while( p!=nullptr && p->eKind == NO_KIND_DEF_){
@@ -252,10 +293,17 @@ void semantics (int rule, int tokenSecundario){
 				p->_.Field.pType=t;
 				p=p->pNext;
 			}
-			attr._DC._.DC.list = attr._LI._.LI.list; // DC.list = LI.list
+			attr._DC._.DC.list = attr._LI._.LI.list; 
+			semanticStack.push(attr._DC);
 			break;
 
 		case DC_REC_RULE:
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._LI = semanticStack.top();
+			semanticStack.pop();
+			attr._DC1 = semanticStack.top();
+			semanticStack.pop();
 			p=attr._LI._.LI.list;
 			t=attr._T._.T.type;
 			while( p!=nullptr && p->eKind == NO_KIND_DEF_){
@@ -263,11 +311,17 @@ void semantics (int rule, int tokenSecundario){
 				p->_.Field.pType=t;
 				p=p->pNext;
 			}
-			attr._DC0._.DC.list = attr._DC1._.DC.list; // DC0.list = DC1.list
+			attr._DC0._.DC.list = attr._DC1._.DC.list;
+			semanticStack.push(attr._DC0);
 			break;
 
 		//figura6.11
 		case DT_STRUCT_RULE:
+			attr._DC = semanticStack.top();
+			semanticStack.pop();
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
+
 			p=attr._IDD._.IDT.obj;
 			p->eKind=STRUCT_TYPE_;
 			p->_.Struct.pFields=attr._DC._.DC.list;
@@ -280,31 +334,48 @@ void semantics (int rule, int tokenSecundario){
 
 		//figura 6.12
 		case LP_IDD_RULE:
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
+
 			p=attr._IDD._.IDT.obj;
 			t=attr._T._.T.type;
 			p->eKind = PARAM_;
 			p->_.Param.pType=t;
 			attr._LP._.LP.list=p;
+			semanticStack.push(attr._LP);
 			break;
 
 		case LP_REC_RULE:
+			attr._T = semanticStack.top();
+			semanticStack.pop();
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
+			attr._LP1 = semanticStack.top();
+			semanticStack.pop();
 			p=attr._IDD._.IDT.obj;
 			t=attr._T._.T.type;
 			p->eKind = PARAM_;
 			p->_.Param.pType=t;
 			attr._LP0._.LP.list=attr._LP1._.LP.list;
+			semanticStack.push(attr._LP0);
 			break;
 
 		//figura 6.13
 		case MF_RULE:
-			// T = TopSem(0);  WTFFFFFFFFF
-			//LP = TopSem(-1);
-			//NB = TopSem(-2);
-			//IDD = TopSem(-3);
+			attr._T = semanticStack.top();
+			semanticStack.pop(); 
+			attr._LP = semanticStack.top();
+			semanticStack.pop();  
+			attr._IDD = semanticStack.top();
+			semanticStack.pop();
 			f=attr._IDD._.IDT.obj;
 			f->eKind= FUNCTION_;
 			f->_.Function.pParams = attr._T._.T.type;
 			f->_.Function.pParams = attr._LP._.LP.list;
+			curFunction = f;
+			break;
 
 		case DF_RULE:
 			endBlock(currentLevel);
@@ -526,7 +597,7 @@ void semantics (int rule, int tokenSecundario){
 			else{
 				p = t->_.Struct.pFields;
 				while( p!= NULL ){
-					if( p->nName == attr._ID._.ID.name )	//ID.name esta onde???
+					if( p->nName == attr._IDT._.IDT.name )	//ID.name esta onde???
 						break;
 				p = p->pNext;
 				}
@@ -541,6 +612,10 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		case LV_SQUARES_E_USE:
+			attr._E = semanticStack.top();
+			semanticStack.pop();
+			attr._LV1 = semanticStack.top();
+			semanticStack.pop();
 			t = attr._LV1._.LV.type;
 			if( t == pString ){
 				attr._LV0._.LV.type = pChar;
@@ -558,7 +633,7 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		case LV_IDU_RULE:
-			p = attr._IDU._.IDU.obj;
+			p = attr._IDU._.IDT.obj;
 			if( p->eKind != VAR_ && p->eKind != PARAM_ ){
 				if( p->eKind != UNIVERSAL_ )
 					errorRoutines::throwError( ERR_KIND_NOT_VAR );
@@ -571,9 +646,9 @@ void semantics (int rule, int tokenSecundario){
 
 		case MC_RULE:
 			attr._IDU = semanticStack.top(); //nao tenho certeza se eh assim msm
-			f = attr._IDU._.IDU.obj;
+			f = attr._IDU._.IDT.obj;
 			if( f->eKind != FUNCTION_ ){
-				errorRoutines::throwError( ERR_KIND_NOT_FUNC );
+				errorRoutines::throwError( ERR_KIND_NOT_FUNCTION );
 				attr._MC._.MC.type = pUniversal;
 				attr._MC._.MC.param = NULL;
 				attr._MC._.MC.err = true;
@@ -600,7 +675,7 @@ void semantics (int rule, int tokenSecundario){
 				}
 				else{
 					if( !checkTypes(p->_.Param.pType,attr._E._.E.type ) ){
-						errorRoutines::throwError( ERR_PARAM_TYPE, n);
+						errorRoutines::throwError( ERR_PARAM_TYPE );
 					}
 					attr._LE._.LE.param = p->pNext;
 					attr._LE._.LE.n = n+1;
@@ -620,7 +695,7 @@ void semantics (int rule, int tokenSecundario){
 				}
 				else{
 				if( !checkTypes(p->_.Param.pType,attr._E._.E.type ) ){
-					errorRoutines::throwError(ERR_PARAM_TYPE, n);
+					errorRoutines::throwError(ERR_PARAM_TYPE);
 				}
 				attr._LE0._.LE.param = p->pNext;
 				attr._LE0._.LE.n = n+1;
