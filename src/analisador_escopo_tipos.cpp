@@ -410,14 +410,14 @@ void semantics (int rule, int tokenSecundario){
 		case R_PLUS_RULE:
 			if( !CheckTypes( attr._R1._.R1.type, attr._Y._.Y.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._R1._.R1.type, pInteger ) && !CheckTypes( attr._R1._.R1.type, pString ))
+			if( !CheckTypes( attr._R1._.R1.type, pInt ) && !CheckTypes( attr._R1._.R1.type, pString ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._R0._.R0.type=attr._R1._.R1.type;
 			break;
 		case R_MINUS_RULE:
 			if( !CheckTypes( attr._R1._.R1.type, attr._Y._.Y.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._R1._.R1.type, pInteger ))
+			if( !CheckTypes( attr._R1._.R1.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._R0._.R0.type=attr._R1._.R1.type;
 			break;
@@ -427,20 +427,97 @@ void semantics (int rule, int tokenSecundario){
 		case Y_TIMES_RULE:
 			if( !CheckTypes( attr._Y1._.Y1.type, attr._F._.F.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._Y1._.Y1.type, pInteger ))
+			if( !CheckTypes( attr._Y1._.Y1.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._Y0._.Y0.type=attr._Y1._.Y1.type;
 			break;
 		case Y_DIVIDE_RULE:
 			if( !CheckTypes( attr._Y1._.Y1.type, attr._F._.F.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
-			if( !CheckTypes( attr._Y1._.Y1.type, pInteger ))
+			if( !CheckTypes( attr._Y1._.Y1.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._Y0._.Y0.type=attr._Y1._.Y1.type;
 			break;
 		case Y_F_RULE:
 			attr._Y._.Y.type=attr._F._.F.type;
 			break;
+
+		//figura 6.21
+		case F_LV_RULE:
+			attr._F._.F.type= attr._LV._.LV.type;
+			break;
+
+
+		case F_PLUSPLUS_LV_RULE:
+			t= attr._LV._.LV.type;
+			if( !CheckTypes( t, pInt ))
+				errorRoutines::throwError( ERR_INVALID_TYPE );
+			attr._F._.F.type=pInt;
+			break;
+
+		case F_MINUSMINUS_LV_RULE:
+			t= attr._LV._.LV.type;
+			if( !CheckTypes( t, pInt ))
+				errorRoutines::throwError( ERR_INVALID_TYPE );
+			attr._F._.F.type=pInt;
+			break;
+
+		case F_LV_PLUSPLUS_RULE:
+			t= attr._LV._.LV.type;
+			if( !CheckTypes( t, pInt ))
+				errorRoutines::throwError( ERR_INVALID_TYPE );
+			attr._F._.F.type=pInt;
+			break;
+
+		case F_LV_MINUSMINUS_RULE:
+			t= attr._LV._.LV.type;
+			if( !CheckTypes( t, pInt ))
+				errorRoutines::throwError( ERR_INVALID_TYPE );
+			attr._F._.F.type=pInt;
+			break;
+
+		case F_PARENTHESIS_RULE:
+			attr._F._.F.type= attr._E._.E.type;
+			break;
+
+		case F_FUNCTIONUSE_RULE:
+			break;
+
+		case F_MINUSF_RULE:
+			t= attr._F1._.F1.type;
+			if( !CheckTypes( t, pInt ))
+				errorRoutines::throwError( ERR_INVALID_TYPE );
+			attr._F._.F.type=pInt;	//nao seria F1.type??
+			break;
+
+		case F_NOTF_RULE:
+			t= attr._F1._.F1.type;
+			if( !CheckTypes( t, pInt ))
+				errorRoutines::throwError( ERR_INVALID_TYPE );
+			attr._F0._.F0.type=pInt;	//nao seria F1.type??
+			break;
+
+		case F_TRU_RULE:
+			attr._F._.F.type=pBool;
+			break;
+
+		case F_FALS_RULE:
+			attr._F._.F.type=pBool;
+			break;
+
+		case F_CH_RULE:
+			attr._F._.F.type=pChar;
+			break;
+
+		case F_ST_RULE:
+			attr._F._.F.type=pString;
+			break;
+
+		case F_NU_RULE:
+			attr._F._.F.type=pInt;
+			break;
+
+		//figura 6.22
 
 		case NF_RULE:
 			newBlock(currentLevel);
