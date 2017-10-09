@@ -518,6 +518,57 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		//figura 6.22
+		case LV_REC_RULE:
+			t=attr._LV1._.LV1.type;
+			if( t->eKind != STRUCT_TYPE_ ){
+				if( t->eKind != UNIVERSAL_ )
+					errorRoutines::throwError( ERR_KIND_NOT_STRUCT );
+				attr._LV0._.LV0.type = pUniversal;
+			}
+			else{
+				p = t->_.Struct.pFields;
+				while( p!= NULL ){
+					if( p->nName == attr._ID._.ID.name )	//ID.name esta onde???
+						break;
+				p = p->pNext;
+				}
+				if( p == NULL ){
+					errorRoutines::throwError( ERR_FIELD_NOT_DECL );
+					attr._LV0._.LV0.type = pUniversal;
+				}
+				else{
+					LV0.type = p->_.Field.pType;
+				}
+			}
+			break;
+
+		case LV_SQUARES_E_USE:
+			t = attr._LV1._.LV1.type;
+			if( t == pString ){
+				attr._LV0._.LV0.type = pChar;
+			} 
+			else if( t->eKind != ARRAY_TYPE_ ){
+				if( t->eKind != UNIVERSAL_ )
+					Error( ERR_KIND_NOT_ARRAY );
+				attr._LV0._.LV0.type = pUniversal;
+			} 
+			else {
+				attr._LV0._.LV0.type = t->_.Array.pElemType;
+			}
+			if( !CheckTypes( E.type, pInt ) )
+				errorRoutines::throwError( ERR_INVALID_INDEX_TYPE );
+			break;
+
+		case LV_IDU_RULE:
+			p = attr._IDU._.IDU.obj;
+			if( p->eKind != VAR_ && p->eKind != PARAM_ ){
+				if( p->eKind != UNIVERSAL_ )
+					Error( ERR_KIND_NOT_VAR );
+				attr._LV._.LV.type = pUniversal;
+			}
+			else
+				attr._LV._.LV.type = p->_.Var.pType;
+			break;
 
 		case NF_RULE:
 			newBlock(currentLevel);
