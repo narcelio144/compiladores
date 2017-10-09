@@ -4,17 +4,20 @@ type customInt = integer
 
 function declaracaoFuncao2(c : char) : integer{
 	var k,i : 	integer;
-	var outerBlock: char;
-	{
-		var innerBlock : char;
-		innerBlock = outerBlock;
+	var a,j : boolean;
 
+	k=1;
+	
+	a = 2;
+	j=true;
+	k = --k*a++;
+
+	if( a == j){
+		var i : integer;
 	}
-	if (c == 'a'){
-		var a : integer;
-		a = 2;
-		k = --k*a++;
-	}
+
+	
+
 	do{
 		var x : integer;
 		x = k/2;

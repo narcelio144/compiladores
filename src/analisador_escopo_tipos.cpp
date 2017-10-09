@@ -118,6 +118,7 @@ void semantics (int rule, int tokenSecundario){
 		case IDD_RULE:
 			name = tokenSecundario;
       		attr._IDD._.IDT.name = name;
+      		attr._IDD.nont = IDD;
       		if((p = search(name,currentLevel)) != nullptr){
       			errorRoutines::throwError(ERR_REDCL);
       		} else{
@@ -131,16 +132,19 @@ void semantics (int rule, int tokenSecundario){
 		case IDU_RULE:
 			name = tokenSecundario;
 			attr._IDU._.IDT.name = name;
+			attr._IDU.nont = IDU;
 			if((p = find(name,currentLevel)) == nullptr){
 				errorRoutines::throwError(ERR_NO_DECL);
 				p = define(name,currentLevel);
 			}
 			attr._IDU._.IDT.obj = p;
+
 			semanticStack.push(attr._IDU);
 			break;
 
 		case IDT_RULE:
 			name = tokenSecundario;
+			attr._IDT.nont = IDT;
 			attr._IDT._.IDT.name = name;
 			attr._IDT._.IDT.obj = nullptr;
 			semanticStack.push(attr._IDT);
@@ -148,18 +152,26 @@ void semantics (int rule, int tokenSecundario){
 
 		case T_INTEGER_RULE:
 			attr._T._.T.type = pInt;
+			attr._T.nont = T;
+			attr._T.nSize=1;
 			semanticStack.push(attr._T);
 			break;
 		case T_CHAR_RULE:
 			attr._T._.T.type = pChar;
+			attr._T.nont = T;
+			attr._T.nSize=1;
 			semanticStack.push(attr._T);
 			break;;
 		case T_STRINGVAL_RULE:
 			attr._T._.T.type = pString;
+			attr._T.nont = T;
+			attr._T.nSize=1;
 			semanticStack.push(attr._T);
 			break;
 		case T_BOOLEAN_RULE:
 			attr._T._.T.type = pBool;
+			attr._T.nont = T;
+			attr._T.nSize=1;
 			semanticStack.push(attr._T);
 			break;
 
@@ -168,14 +180,17 @@ void semantics (int rule, int tokenSecundario){
 		// Figura 6.5
 		case T_IDU_RULE:
 			attr._IDU = semanticStack.top();
-			semanticStack.pop();
 			p= attr._IDU._.IDT.obj;
+			semanticStack.pop();
+			
 			if (IS_TYPE_KIND(p->eKind) || p->eKind == UNIVERSAL_){
 				attr._T._.T.type = p;
 			} else {
 				attr._T._.T.type = pUniversal;
+				attr._T.nSize=0;
 				errorRoutines::throwError(ERR_TYPE_EXPECTED);
 			}
+			attr._T.nont=T;
 			semanticStack.push(attr._T);
 			break;
 		
@@ -386,20 +401,43 @@ void semantics (int rule, int tokenSecundario){
 			endBlock(currentLevel);
 			break;
 
+		case S_RETURN_RULE:
+			attr._E=semanticStack.top();
+			semanticStack.pop();
+			if(!checkTypes(curFunction->_.Function.pRetType,attr._E._.E.type)){
+                errorRoutines::throwError(ERR_RETURN_TYPE_MISMATCH);
+            }
+            break;
+
 		//figura 6.15
 		case S_IF_RULE:
+			attr._MT = semanticStack.top();
+			semanticStack.pop();
+			attr._E=semanticStack.top();
+			semanticStack.pop();
+
 			t=attr._E._.E.type;
 			if(!checkTypes(t,pBool))
 				errorRoutines::throwError(ERR_BOOL_TYPE_EXPECTED);
 			break;
 
 		case S_IF_ELSE_RULE:
+			attr._ME=semanticStack.top();
+			semanticStack.pop();
+			attr._MT = semanticStack.top();
+			semanticStack.pop();
+			attr._E=semanticStack.top();
+			semanticStack.pop();
 			t=attr._E._.E.type;
 			if(!checkTypes(t,pBool))
 				errorRoutines::throwError(ERR_BOOL_TYPE_EXPECTED);
 			break;
 
 		case S_WHILE_RULE:
+			attr._MT = semanticStack.top();
+			semanticStack.pop();
+			attr._E=semanticStack.top();
+			semanticStack.pop();
 			t=attr._E._.E.type;
 			if(!checkTypes(t,pBool))
 				errorRoutines::throwError(ERR_BOOL_TYPE_EXPECTED);
@@ -419,175 +457,327 @@ void semantics (int rule, int tokenSecundario){
 			break;
 		//figura 6.18
 		case E_AND_RULE:
+			attr._L = semanticStack.top();
+			semanticStack.pop();
+			attr._E1 = semanticStack.top();
+			semanticStack.pop();
+
 			if( !checkTypes( attr._E1._.E.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
 			if( !checkTypes( attr._L._.L.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
 			attr._E0._.E.type = pBool;
+			attr._E0.nont = E;
+			semanticStack.push(attr._E0);
 			break;
 
 		case E_OR_RULE:
+			attr._L=semanticStack.top();
+			semanticStack.pop();
+			attr._E1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._E1._.E.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
 			if( !checkTypes( attr._L._.L.type, pBool ) )
 				errorRoutines::throwError( ERR_BOOL_TYPE_EXPECTED );
 			attr._E0._.E.type = pBool;
+			attr._E0.nont=E;
+			semanticStack.push(attr._E0);
 			break;
 
 		case E_L_RULE:
-			attr._E._.E.type=attr._L._.L.type; //E.type=L.Type;
+			attr._L=semanticStack.top();
+			semanticStack.pop();
+			attr._E._.E.type=attr._L._.L.type; 
+			attr._E.nont = E;
+			semanticStack.push(attr._E);
 			break;
 
 		//figura 6.19
 		case L_LESSTHAN_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
+			attr._L1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			attr._L0._.L.type = pBool;
+			attr._L0.nont = L;
+			semanticStack.push(attr._L0);
 			break;
 		case L_GREATHERTHAN_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
+			attr._L1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			attr._L0._.L.type = pBool;
+			attr._L0.nont = L;
+			semanticStack.push(attr._L0);
 			break;
 
 		case L_LESSOREQUAL_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
+			attr._L1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			attr._L0._.L.type = pBool;
+			attr._L0.nont = L;
+			semanticStack.push(attr._L0);
 			break;
 
 		case L_GREATHEROREQUAL_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
+			attr._L1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			attr._L0._.L.type = pBool;
+			attr._L0.nont = L;
+			semanticStack.push(attr._L0);
 			break;
 
 		case L_EQUALEQUAL_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
+			attr._L1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			attr._L0._.L.type = pBool;
+			attr._L0.nont = L;
+			semanticStack.push(attr._L0);
 			break;
 
 		case L_NOTEQUAL_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
+			attr._L1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._L1._.L.type, attr._R._.R.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			attr._L0._.L.type = pBool;
+			attr._L0.nont = L;
+			semanticStack.push(attr._L0);
 			break;
 
 		case L_R_RULE:
+			attr._R=semanticStack.top();
+			semanticStack.pop();
 			attr._L._.L.type = attr._R._.R.type;
+			attr._L.nont = L;
+			semanticStack.push(attr._L);
 			break;
 
 		//figura 6.20
 		case R_PLUS_RULE:
+			attr._Y=semanticStack.top();
+			semanticStack.pop();
+			attr._R1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._R1._.R.type, attr._Y._.Y.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			if( !checkTypes( attr._R1._.R.type, pInt ) && !checkTypes( attr._R1._.R.type, pString ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._R0._.R.type=attr._R1._.R.type;
+			attr._R0.nont = R;
+			semanticStack.push(attr._R0);
 			break;
 		case R_MINUS_RULE:
+			attr._Y=semanticStack.top();
+			semanticStack.pop();
+			attr._R1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._R1._.R.type, attr._Y._.Y.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			if( !checkTypes( attr._R1._.R.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._R0._.R.type=attr._R1._.R.type;
+			attr._R0.nont = R;
+			semanticStack.push(attr._R0);
 			break;
 		case R_Y_RULE:
+			attr._Y=semanticStack.top();
+			semanticStack.pop();
 			attr._R._.R.type=attr._Y._.Y.type;
+			attr._R.nont = R;
+			semanticStack.push(attr._R);
 			break;
 		case Y_TIMES_RULE:
+			attr._F=semanticStack.top();
+			semanticStack.pop();
+			attr._Y1=semanticStack.top();
+			semanticStack.pop();
 			if( !checkTypes( attr._Y1._.Y.type, attr._F._.F.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			if( !checkTypes( attr._Y1._.Y.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._Y0._.Y.type=attr._Y1._.Y.type;
+			attr._Y0.nont= Y;
+			semanticStack.push(attr._Y0);
 			break;
 		case Y_DIVIDE_RULE:
+			attr._F=semanticStack.top();
+			semanticStack.pop();
+			attr._Y1=semanticStack.top();
+			semanticStack.pop();
+
 			if( !checkTypes( attr._Y1._.Y.type, attr._F._.F.type ) )
 				errorRoutines::throwError( ERR_TYPE_MISMATCH );
 			if( !checkTypes( attr._Y1._.Y.type, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._Y0._.Y.type=attr._Y1._.Y.type;
+			attr._Y0.nont= Y;
+			semanticStack.push(attr._Y0);
 			break;
 		case Y_F_RULE:
+			attr._F=semanticStack.top();
+			semanticStack.pop();
+			attr._Y=semanticStack.top();
+			semanticStack.pop();
 			attr._Y._.Y.type=attr._F._.F.type;
+			attr._Y.nont= Y;
+			semanticStack.push(attr._Y);
 			break;
 
 		//figura 6.21
 		case F_LV_RULE:
+			attr._LV=semanticStack.top();
+			semanticStack.pop();
 			attr._F._.F.type= attr._LV._.LV.type;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 
 		case F_PLUSPLUS_LV_RULE:
+			attr._LV=semanticStack.top();
+			semanticStack.pop();
+
 			t= attr._LV._.LV.type;
 			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_MINUSMINUS_LV_RULE:
+			attr._LV=semanticStack.top();
+			semanticStack.pop();
 			t= attr._LV._.LV.type;
 			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_LV_PLUSPLUS_RULE:
+			attr._LV=semanticStack.top();
+			semanticStack.pop();
 			t= attr._LV._.LV.type;
 			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_LV_MINUSMINUS_RULE:
+			attr._LV=semanticStack.top();
+			semanticStack.pop();
 			t= attr._LV._.LV.type;
 			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
 			attr._F._.F.type=pInt;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_PARENTHESIS_RULE:
+			attr._E=semanticStack.top();
+			semanticStack.pop();
 			attr._F._.F.type= attr._E._.E.type;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_MINUSF_RULE:
+			attr._F1=semanticStack.top();
+			semanticStack.pop();
 			t= attr._F1._.F.type;
 			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._F._.F.type=pInt;	//nao seria F1.type??
+			attr._F0._.F.type=t;
+			attr._F0.nont= F;
+			semanticStack.push(attr._F0);
 			break;
 
 		case F_NOTF_RULE:
+			attr._F1=semanticStack.top();
+			semanticStack.pop();
+
 			t= attr._F1._.F.type;
 			if( !checkTypes( t, pInt ))
 				errorRoutines::throwError( ERR_INVALID_TYPE );
-			attr._F0._.F.type=pInt;	//nao seria F1.type??
+			attr._F0._.F.type=t;	
+			attr._F0.nont= F;
+			semanticStack.push(attr._F0);
 			break;
 
 		case F_TRU_RULE:
+			attr._TRU=semanticStack.top();
+			semanticStack.pop();
+
 			attr._F._.F.type=pBool;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_FALS_RULE:
+			attr._FALS=semanticStack.top();
+			semanticStack.pop();
 			attr._F._.F.type=pBool;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_CH_RULE:
+			attr._CH=semanticStack.top();
+			semanticStack.pop();
 			attr._F._.F.type=pChar;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_ST_RULE:
+			attr._ST=semanticStack.top();
+			semanticStack.pop();
 			attr._F._.F.type=pString;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		case F_NU_RULE:
+			attr._NU=semanticStack.top();
+			semanticStack.pop();
 			attr._F._.F.type=pInt;
+			attr._F.nont= F;
+			semanticStack.push(attr._F);
 			break;
 
 		//figura 6.22
 		case LV_REC_RULE:
+			attr._IDT=semanticStack.top();
+			semanticStack.pop();
+			attr._LV1=semanticStack.top();
+			semanticStack.pop();
+
 			t=attr._LV1._.LV.type;
 			if( t->eKind != STRUCT_TYPE_ ){
 				if( t->eKind != UNIVERSAL_ )
@@ -609,6 +799,8 @@ void semantics (int rule, int tokenSecundario){
 					attr._LV0._.LV.type = p->_.Field.pType;
 				}
 			}
+			attr._LV0.nont = LV;
+			semanticStack.push(attr._LV0);
 			break;
 
 		case LV_SQUARES_E_USE:
@@ -630,17 +822,24 @@ void semantics (int rule, int tokenSecundario){
 			}
 			if( !checkTypes( attr._E._.E.type, pInt ) )
 				errorRoutines::throwError( ERR_INVALID_INDEX_TYPE );
+			semanticStack.push(attr._LV0);
+
 			break;
 
 		case LV_IDU_RULE:
+			attr._IDU = semanticStack.top();
+			semanticStack.pop();
 			p = attr._IDU._.IDT.obj;
 			if( p->eKind != VAR_ && p->eKind != PARAM_ ){
 				if( p->eKind != UNIVERSAL_ )
 					errorRoutines::throwError( ERR_KIND_NOT_VAR );
 				attr._LV._.LV.type = pUniversal;
 			}
-			else
+			else{
 				attr._LV._.LV.type = p->_.Var.pType;
+				attr._LV._.LV.type->_.Type.nSize = p->_.Var.nSize;
+			}
+			semanticStack.push(attr._LV);
 			break;
 		//figura 6.23
 
@@ -658,6 +857,7 @@ void semantics (int rule, int tokenSecundario){
 				attr._MC._.MC.param = f->_.Function.pParams;
 				attr._MC._.MC.err = false;
 			}
+			semanticStack.push(attr._MC);
 			break;
 
 		case LE_E_RULE:
@@ -681,9 +881,14 @@ void semantics (int rule, int tokenSecundario){
 					attr._LE._.LE.n = n+1;
 				}
 			}
+			semanticStack.push(attr._LE);
 			break;
 
 		case LE_REC_RULE:
+			attr._E = semanticStack.top();
+			semanticStack.pop();
+			attr._LE1 = semanticStack.top();
+			semanticStack.pop();
 			attr._LE0._.LE.param = nullptr;
 			attr._LE0._.LE.err = attr._LE1._.LE.err;
 			n = attr._LE1._.LE.n;
@@ -701,14 +906,23 @@ void semantics (int rule, int tokenSecundario){
 				attr._LE0._.LE.n = n+1;
 				}
 			}
+			semanticStack.push(attr._LE0);
 			break;
 
 		case F_FUNCTIONUSE_RULE:
+			attr._LE = semanticStack.top();
+			semanticStack.pop();
+			attr._MC = semanticStack.top();
+			semanticStack.pop();
+			attr._IDU = semanticStack.top();
+			semanticStack.pop();
+
 			attr._F._.F.type = attr._MC._.MC.type;
 			if(!attr._MC._.MC.err){
 				if( attr._LE._.LE.param != NULL )
 					errorRoutines::throwError( ERR_TOO_FEW_ARGS );
 			}
+			semanticStack.push(attr._F);
 			break;
 
 		case NF_RULE:
