@@ -480,9 +480,6 @@ void semantics (int rule, int tokenSecundario){
 			attr._F._.F.type= attr._E._.E.type;
 			break;
 
-		case F_FUNCTIONUSE_RULE:
-			break;
-
 		case F_MINUSF_RULE:
 			t= attr._F1._.F1.type;
 			if( !CheckTypes( t, pInt ))
@@ -549,7 +546,7 @@ void semantics (int rule, int tokenSecundario){
 			} 
 			else if( t->eKind != ARRAY_TYPE_ ){
 				if( t->eKind != UNIVERSAL_ )
-					Error( ERR_KIND_NOT_ARRAY );
+					errorRoutines::throwError( ERR_KIND_NOT_ARRAY );
 				attr._LV0._.LV0.type = pUniversal;
 			} 
 			else {
@@ -563,11 +560,78 @@ void semantics (int rule, int tokenSecundario){
 			p = attr._IDU._.IDU.obj;
 			if( p->eKind != VAR_ && p->eKind != PARAM_ ){
 				if( p->eKind != UNIVERSAL_ )
-					Error( ERR_KIND_NOT_VAR );
+					errorRoutines::throwError( ERR_KIND_NOT_VAR );
 				attr._LV._.LV.type = pUniversal;
 			}
 			else
 				attr._LV._.LV.type = p->_.Var.pType;
+			break;
+		//figura 6.23
+
+		case MC_RULE:
+			attr._IDU = semanticStack.Top(); //nao tenho certeza se eh assim msm
+			f = attr._IDU._.IDU.obj;
+			if( f->eKind != FUNCTION_ ){
+				errorRoutines::throwError( ERR_KIND_NOT_FUNC );
+				attr._MC._.MC.type = pUniversal;
+				attr._MC._.MC.param = NULL;
+				attr._MC._.MC.err = true;
+			}
+			else{
+				attr._MC._.MC.type = f->_.Function.pRetType;
+				attr._MC._.MC.param = f->_.Function.pParams;
+				attr._MC._.MC.err = false;
+			}
+			break;
+
+		case LE_E_RULE:
+			attr._E = semanticStack.top(); //nao tenho certeza se eh assim msm
+			semanticStack.pop()
+			attr._MC = semanticStack.top(); // idem sem certeza
+			attr._LE._.LE.param = NULL;
+			attr._LE._.LE.err = MC.err;
+			n = 1;
+			if(!attr._MC._.MC.err){
+				p = MC.param;
+				if( p == NULL ){
+					errorRoutines::throwError(ERR_TOO_MANY_ARGS);
+					LE.err = true;
+				}
+				else{
+					if( !CheckTypes(p->_.Param.pType,E.type ) ){
+						errorRoutines::throwError( ERR_PARAM_TYPE, n);
+					}
+					LE.param = p->pNext;
+					LE.n = n+1;
+				}
+			}
+			break;
+
+		case LE_REC_RULE:
+			attr._LE0._.LE0.param = nullptr;
+			attr._LE0._.LE0.err = LE1.err;
+			n = attr._LE1._.LE1.n;
+			if( !attr._LE1._.LE1.err ){
+				p = attr._LE._.LE.param;
+				if( p == NULL ){
+						errorRoutines::throwError(ERR_TOO_MANY_ARGS);
+						attr._LE0._.LE0.err = true;
+				}
+				else{
+				if( !CheckTypes(p->_.Param.pType,E.type ) ){
+					errorRoutines::throwError(ERR_PARAM_TYPE, n);
+				}
+				attr._LE0._.LE0.param = p->pNext;
+				attr._LE0._.LE0.n = n+1;
+			}
+			break;
+
+		case F_FUNCTIONUSE_RULE:
+			attr._F._.F.type = attr._MC._.MC.type;
+			if(!attr._MC._.MC.err){
+				if( LE.param != NULL )
+					errorRoutines::throwError( ERR_TOO_FEW_ARGS );
+			}
 			break;
 
 		case NF_RULE:
