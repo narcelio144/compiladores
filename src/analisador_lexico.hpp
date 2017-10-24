@@ -26,7 +26,6 @@ extern int currentLine;
 
 //Métodos para inicialização das estruturas de dados necessárias
 void initializeReservedWordMap();
-void initializeTerminalNames();
 //Métodos para tratamento de constantes
 int addCharConst(char c);
 int addIntConst(int n);
@@ -43,9 +42,6 @@ void scanNum(token_struct& s_token,char& nextChar);
 t_token searchKeyWord(string);
 int searchName(string);
 token_struct nextToken();
-
-//Método que será chamado pela função main do compilador para realizar a somente a análise léxica
-void lexical_analysis();
 
 void getCurrentLine();
 

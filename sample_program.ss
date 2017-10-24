@@ -2,41 +2,19 @@ type meuArray = array [10] of integer
 type arrayChar = array [10] of char
 type customInt = integer
 
-function declaracaoFuncao2(c : char) : integer{
-	var k,i : 	integer;
-	var a,j : boolean;
-
-	k=1;
-	
-	a = 2;
-	j=true;
-	k = --k*a++;
-
-	if( a == j){
-		var i : integer;
-	}
-
-	
-
-	do{
-		var x : integer;
-		x = k/2;
-		k = k*x;
-	} while (k >= 6 && k <= 323);
-	return k*3+i;
-
+type minhaStruct = struct {
+	x,y : integer;
+	z : arrayChar
 }
 
 function declaracaoFuncao(n : integer) : integer{
-	var a,b,redecl,x : integer;
-	var redecl : char;
+	var a,b : integer;
 	var c,d,e,f,g : boolean;
 	var h : char;
-	var s : string;
+	var s : strinh;
 	a = 1;
 	b = 2;
 	d = true;
-	naodecl = "batata";
 	{
 		var x : integer;
 		x = b + 2;
@@ -57,6 +35,21 @@ function declaracaoFuncao(n : integer) : integer{
 	}
 	if(n == 0)
 		return 1;
-	x = declaracaoFuncao2(e);
-	return x*3;
+	p = declaracaoFuncao2(e);
+	return p*3;
+}
+
+function declaracaoFuncao2(c : char) : integer{
+	var k,i : 	integer;
+	if (c == 'a'){
+		var a : integer;
+		a = 2;
+		k = --k*a++;
+	}
+	do{
+		var x : integer;
+		x = k/2;
+		k = k*x;
+	} while (k >= 6 && k <= 323);
+	return k*3+i;
 }

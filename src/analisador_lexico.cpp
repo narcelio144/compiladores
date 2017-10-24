@@ -7,60 +7,6 @@ vector<t_const> vConst = vector<t_const>();
 unordered_map<int,string> t_terminalNames = unordered_map<int,string>();
 int currentLine = 1;
 
-//This structure is used only for debugging purposes
-void initializeTerminalNames(void){
-    t_terminalNames[ARRAY] = "ARRAY";
-    t_terminalNames[BOOLEAN] = "BOOLEAN";
-    t_terminalNames[BREAK] = "BREAK";
-    t_terminalNames[CHAR] = "CHAR";
-    t_terminalNames[CONTINUE] = "CONTINUE";
-    t_terminalNames[DO] = "DO";
-    t_terminalNames[ELSE] = "ELSE";
-		t_terminalNames[ENDFILE] = "ENDFILE";
-    t_terminalNames[FALSE] = "FALSE";
-    t_terminalNames[FUNCTION] = "FUNCTION";
-    t_terminalNames[IF] = "IF";
-    t_terminalNames[INTEGER] = "INTEGER";
-    t_terminalNames[OF] = "OF";
-    t_terminalNames[RETURN] = "RETURN";
-    t_terminalNames[STRING] = "STRING";
-    t_terminalNames[STRUCT] = "STRUCT";
-    t_terminalNames[TRUE] = "TRUE";
-    t_terminalNames[TYPE] = "TYPE";
-    t_terminalNames[VAR] = "VAR";
-    t_terminalNames[WHILE] = "WHILE";
-    t_terminalNames[COLON] = "COLON";
-    t_terminalNames[SEMI_COLON] = "SEMI_COLON";
-    t_terminalNames[COMMA] = "COMMA";
-    t_terminalNames[EQUALS] = "EQUALS";
-    t_terminalNames[LEFT_SQUARE] = "LEFT_SQUARE";
-    t_terminalNames[RIGHT_SQUARE] = "RIGHT_SQUARE";
-    t_terminalNames[LEFT_BRACES] = "LEFT_BRACES";
-    t_terminalNames[RIGHT_BRACES] = "RIGHT_BRACES";
-    t_terminalNames[LEFT_PARENTHESIS] = "LEFT_PARENTHESIS";
-    t_terminalNames[RIGHT_PARENTHESIS] = "RIGHT_PARENTHESIS";
-    t_terminalNames[AND] = "AND";
-    t_terminalNames[OR] = "OR";
-    t_terminalNames[LESS_THAN] = "LESS_THAN";
-    t_terminalNames[GREATER_THAN] = "GREATER_THAN";
-    t_terminalNames[LESS_OR_EQUAL] = "LESS_OR_EQUAL";
-    t_terminalNames[GREATER_OR_EQUAL] = "GREATER_OR_EQUAL";
-    t_terminalNames[NOT_EQUAL] = "NOT_EQUAL";
-    t_terminalNames[EQUAL_EQUAL] = "EQUAL_EQUAL";
-    t_terminalNames[PLUS] = "PLUS";
-    t_terminalNames[PLUS_PLUS] = "PLUS_PLUS";
-    t_terminalNames[MINUS] = "MINUS";
-    t_terminalNames[MINUS_MINUS] = "MINUS_MINUS";
-    t_terminalNames[TIMES] = "TIMES";
-    t_terminalNames[DIVIDE] = "DIVIDE";
-    t_terminalNames[DOT] = "DOT";
-    t_terminalNames[NOT] = "NOT";
-    t_terminalNames[CHARACTER] = "CHARACTER";
-    t_terminalNames[NUMERAL] = "NUMERAL";
-    t_terminalNames[STRINGVAL] = "STRINGVAL";
-    t_terminalNames[ID] = "ID";
-    t_terminalNames[UNKNOWN] = "UNKNOWN";
-}
 void initializeReservedWordMap(){
 				reservedWordMap["array"]=ARRAY;
         reservedWordMap["boolean"] = BOOLEAN;
@@ -352,15 +298,4 @@ token_struct nextToken() {
         }
     }
     return s_token;
-}
-
-void lexical_analysis(){
-	initializeTerminalNames();
-	initializeReservedWordMap();
-	token_struct t;
-	do{
-		t = nextToken();
-		cout << t_terminalNames[t.token] << " ";
-	} while (t.token != ENDFILE);
-	cout << "[!] Finished lexical analysis" << endl;
 }
