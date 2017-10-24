@@ -185,6 +185,15 @@ void semantics (int rule, int tokenSecundario){
 			
 			if (IS_TYPE_KIND(p->eKind) || p->eKind == UNIVERSAL_){
 				attr._T._.T.type = p;
+				if(p->eKind == ALIAS_TYPE_){
+					attr._T.nSize = p->_.Alias.nSize;
+				}
+				else if(p->eKind == ARRAY_TYPE_){
+					attr._T.nSize = p->_.Array.nSize;
+				}
+				else if(p->eKind == STRUCT_TYPE_){
+					attr._T.nSize = p->_.Struct.nSize;
+				}
 			} else {
 				attr._T._.T.type = pUniversal;
 				attr._T.nSize=0;
@@ -197,8 +206,9 @@ void semantics (int rule, int tokenSecundario){
 		// Figura 6.6
 		case LI_IDD_RULE:
 			attr._IDD = semanticStack.top();
-			semanticStack.pop();
 			attr._LI._.LI.list = attr._IDD._.IDT.obj;
+			attr._LI.nont = LI;
+			semanticStack.pop();
 			semanticStack.push(attr._LI);
 			break;
 
@@ -207,56 +217,68 @@ void semantics (int rule, int tokenSecundario){
 			semanticStack.pop();
 			attr._LI1 = semanticStack.top();
 			semanticStack.pop();
-			attr._LI0._.LI.list = attr._LI1._.LI.list; //deveria ser LI0.list=LI1.list;
+			attr._LI0._.LI.list = attr._LI1._.LI.list;
+			attr._LI0.nont = LI;
 			semanticStack.push(attr._LI0);
 			break;
 		
 		case DV_RULE:
 			attr._T = semanticStack.top();
+			t=attr._T._.T.type;
 			semanticStack.pop();
 			attr._LI = semanticStack.top();
 			semanticStack.pop();
 			p=attr._LI._.LI.list;
-			t=attr._T._.T.type;
+			n = curFunction->_.Function.nVars;
 
 			while(p!=nullptr && p->eKind == NO_KIND_DEF_){
 				p->eKind=VAR_;
 				p->_.Var.pType = t;
+				p->_.Var.nSize = attr._T.nSize;
+				p->_.Var.nIndex = n;
+				n += attr._T.nSize;
 				p=p->pNext;
 			}
+
+			curFunction->_.Function.nVars = n;
 			break;
 		
 		//figura 6.7
 		case TRU_TRUE_RULE:
+			attr._TRU.nont = TRU;
 			attr._TRU._.TRU.type = pBool;
 			attr._TRU._.TRU.val = true;
 			semanticStack.push(attr._TRU);
 			break;
 
 		case FALS_FALSE_USE:
+			attr._FALS.nont = FALS;
 			attr._FALS._.FALS.type = pBool;
 			attr._FALS._.FALS.val = false;
 			semanticStack.push(attr._FALS);
 			break;
 
 		case CH_CHARACTER_RULE:
+			attr._CH.nont = CH;
 			attr._CH._.CH.type = pChar;
 			attr._CH._.CH.pos = tokenSecundario;
-			attr._CH._.CH.val = getCharConst(attr._CH._.CH.pos);
+			attr._CH._.CH.val = getCharConst(tokenSecundario);
 			semanticStack.push(attr._CH);
 			break;
 		
 		case ST_STRINGVAL_RULE:
+			attr._ST.nont = ST;
 			attr._ST._.ST.type = pString;
 			attr._ST._.ST.pos = tokenSecundario;
-			attr._ST._.ST.val = getStringConst(attr._ST._.ST.pos);
+			attr._ST._.ST.val = getStringConst(tokenSecundario);
 			semanticStack.push(attr._ST);
 			break;
 
 		case NU_NUMERAL_RULE:
+			attr._NU.nont = NU;
 			attr._NU._.NU.type = pString;
 			attr._NU._.NU.pos = tokenSecundario;
-			attr._NU._.NU.val = getIntConst(attr._NU._.NU.pos);
+			attr._NU._.NU.val = getIntConst(tokenSecundario);
 			semanticStack.push(attr._NU);
 			break;
 
@@ -264,8 +286,10 @@ void semantics (int rule, int tokenSecundario){
 		case DT_ARRAY_RULE:
 			attr._T = semanticStack.top();
 			semanticStack.pop();
+			
 			attr._NU = semanticStack.top();
 			semanticStack.pop();
+			
 			attr._IDD = semanticStack.top();
 			semanticStack.pop();
 
@@ -303,12 +327,17 @@ void semantics (int rule, int tokenSecundario){
 			semanticStack.pop();
 			p=attr._LI._.LI.list;
 			t=attr._T._.T.type;
+			n=0;
 			while( p!=nullptr && p->eKind == NO_KIND_DEF_){
 				p->eKind=FIELD_;
 				p->_.Field.pType=t;
+				p->_.Field.nIndex=n;
+				n= n + attr._T.nSize;
 				p=p->pNext;
 			}
 			attr._DC._.DC.list = attr._LI._.LI.list; 
+			attr._DC.nSize = n;
+			attr._DC.nont = DC;
 			semanticStack.push(attr._DC);
 			break;
 
@@ -321,12 +350,20 @@ void semantics (int rule, int tokenSecundario){
 			semanticStack.pop();
 			p=attr._LI._.LI.list;
 			t=attr._T._.T.type;
+			n=attr._DC1.nSize;
+
 			while( p!=nullptr && p->eKind == NO_KIND_DEF_){
 				p->eKind=FIELD_;
 				p->_.Field.pType=t;
+				p->_.Field.nIndex=n;
+				p->_.Field.nSize = attr._T.nSize;
+				n= n + attr._T.nSize;
+
 				p=p->pNext;
 			}
 			attr._DC0._.DC.list = attr._DC1._.DC.list;
+			attr._DC0.nSize = n;
+			attr._DC0.nont = DC;
 			semanticStack.push(attr._DC0);
 			break;
 
@@ -340,6 +377,7 @@ void semantics (int rule, int tokenSecundario){
 			p=attr._IDD._.IDT.obj;
 			p->eKind=STRUCT_TYPE_;
 			p->_.Struct.pFields=attr._DC._.DC.list;
+			p->_.Struct.nSize = attr._DC.nSize;
 			endBlock(currentLevel);
 			break;
 
@@ -358,7 +396,11 @@ void semantics (int rule, int tokenSecundario){
 			t=attr._T._.T.type;
 			p->eKind = PARAM_;
 			p->_.Param.pType=t;
+			p->_.Param.nIndex = 0;
+			p->_.Struct.nSize = attr._T.nSize;
 			attr._LP._.LP.list=p;
+			attr._LP.nSize=attr._T.nSize;
+			attr._LP.nSize = LP;
 			semanticStack.push(attr._LP);
 			break;
 
@@ -369,8 +411,11 @@ void semantics (int rule, int tokenSecundario){
 			semanticStack.pop();
 			attr._LP1 = semanticStack.top();
 			semanticStack.pop();
-			p=attr._IDD._.IDT.obj;
-			t=attr._T._.T.type;
+			
+			p = attr._IDD._.IDT.obj;
+			t = attr._T._.T.type;
+			n = attr._LP1.nSize;
+
 			p->eKind = PARAM_;
 			p->_.Param.pType=t;
 			attr._LP0._.LP.list=attr._LP1._.LP.list;

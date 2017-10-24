@@ -16,7 +16,7 @@ void initializeTerminalNames(void){
     t_terminalNames[CONTINUE] = "CONTINUE";
     t_terminalNames[DO] = "DO";
     t_terminalNames[ELSE] = "ELSE";
-		t_terminalNames[ENDFILE] = "ENDFILE";
+	t_terminalNames[ENDFILE] = "ENDFILE";
     t_terminalNames[FALSE] = "FALSE";
     t_terminalNames[FUNCTION] = "FUNCTION";
     t_terminalNames[IF] = "IF";
