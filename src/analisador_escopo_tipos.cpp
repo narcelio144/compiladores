@@ -418,7 +418,12 @@ void semantics (int rule, int tokenSecundario){
 
 			p->eKind = PARAM_;
 			p->_.Param.pType=t;
+			p->_.Param.nIndex = n;
+			p->_.Struct.nSize = attr._T.nSize;
+
 			attr._LP0._.LP.list=attr._LP1._.LP.list;
+			attr._LP0.nSize = n + attr._T.nSize;
+			attr._LP0.nont = LP;
 			semanticStack.push(attr._LP0);
 			break;
 
@@ -447,11 +452,14 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		case S_RETURN_RULE:
+			printf("AQUI1\n");
 			attr._E=semanticStack.top();
 			semanticStack.pop();
+			printf("AQUI2\n");
 			if(!checkTypes(curFunction->_.Function.pRetType,attr._E._.E.type)){
                 errorRoutines::throwError(ERR_RETURN_TYPE_MISMATCH);
             }
+            printf("AQUI3\n");
             break;
 
 		//figura 6.15
@@ -682,8 +690,6 @@ void semantics (int rule, int tokenSecundario){
 		case Y_F_RULE:
 			attr._F=semanticStack.top();
 			semanticStack.pop();
-			attr._Y=semanticStack.top();
-			semanticStack.pop();
 			attr._Y._.Y.type=attr._F._.F.type;
 			attr._Y.nont= Y;
 			semanticStack.push(attr._Y);
@@ -891,6 +897,7 @@ void semantics (int rule, int tokenSecundario){
 		case MC_RULE:
 			attr._IDU = semanticStack.top(); //nao tenho certeza se eh assim msm
 			f = attr._IDU._.IDT.obj;
+
 			if( f->eKind != FUNCTION_ ){
 				errorRoutines::throwError( ERR_KIND_NOT_FUNCTION );
 				attr._MC._.MC.type = pUniversal;
@@ -902,6 +909,7 @@ void semantics (int rule, int tokenSecundario){
 				attr._MC._.MC.param = f->_.Function.pParams;
 				attr._MC._.MC.err = false;
 			}
+			attr._MC.nont = MC;
 			semanticStack.push(attr._MC);
 			break;
 
