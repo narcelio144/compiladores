@@ -14,6 +14,11 @@ listObject universal_ = {-1, nullptr, SCALAR_TYPE_};
 listObject* pUniversal = &universal_;
 stack<t_attrib> semanticStack = stack<t_attrib>();
 
+int newLabel(void){
+	static int labelNo = 0;
+	return labelNo++;
+}
+
 bool checkTypes(listObject *t1, listObject *t2){
 	if( t1 == t2 )
 		return true;
@@ -435,10 +440,15 @@ void semantics (int rule, int tokenSecundario){
 			semanticStack.pop();  
 			attr._IDD = semanticStack.top();
 			semanticStack.pop();
+
 			f=attr._IDD._.IDT.obj;
 			f->eKind= FUNCTION_;
+			f->_.Function.pRetType = attr._T._.T.type;
 			f->_.Function.pParams = attr._T._.T.type;
 			f->_.Function.pParams = attr._LP._.LP.list;
+			f->_.Function.nParams = attr._LP.nSize;
+			f->_.Function.nVars = attr._LP.nSize;
+
 			curFunction = f;
 			break;
 
@@ -452,16 +462,38 @@ void semantics (int rule, int tokenSecundario){
 			break;
 
 		case S_RETURN_RULE:
-			printf("AQUI1\n");
 			attr._E=semanticStack.top();
 			semanticStack.pop();
-			printf("AQUI2\n");
+
 			if(!checkTypes(curFunction->_.Function.pRetType,attr._E._.E.type)){
-                errorRoutines::throwError(ERR_RETURN_TYPE_MISMATCH);
+               errorRoutines::throwError(ERR_RETURN_TYPE_MISMATCH);
             }
-            printf("AQUI3\n");
+
             break;
 
+        case MT_RULE:
+        	l = newLabel();
+        	attr._MT.label = l;
+        	attr._MT.nont = MT;
+			semanticStack.push(attr._MT);
+			break;
+			
+		case ME_RULE:
+			attr._MT = semanticStack.top();
+            l1 = attr._MT._.MT.label;
+            l2 = newLabel();
+            attr._ME._.ME.label = l2;
+            attr._ME.nont = ME;
+			semanticStack.push(attr._ME);
+			break;
+
+		case MW_RULE:
+			l = newLabel();
+			attr._MW._.MW.label = l;
+			semanticStack.push(attr._MW);
+			break;
+		// case ME_RULE:
+  //           
 		//figura 6.15
 		case S_IF_RULE:
 			attr._MT = semanticStack.top();
@@ -474,6 +506,7 @@ void semantics (int rule, int tokenSecundario){
 				errorRoutines::throwError(ERR_BOOL_TYPE_EXPECTED);
 			break;
 
+
 		case S_IF_ELSE_RULE:
 			attr._ME=semanticStack.top();
 			semanticStack.pop();
@@ -481,6 +514,10 @@ void semantics (int rule, int tokenSecundario){
 			semanticStack.pop();
 			attr._E=semanticStack.top();
 			semanticStack.pop();
+
+
+			l = attr._ME._.ME.label;
+			
 			t=attr._E._.E.type;
 			if(!checkTypes(t,pBool))
 				errorRoutines::throwError(ERR_BOOL_TYPE_EXPECTED);
