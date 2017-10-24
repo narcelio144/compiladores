@@ -2087,7 +2087,7 @@ void build_action_table(){
 	actionTable[161][LEFT_BRACES] = -28;
 	actionTable[161][RIGHT_BRACES] = -28;
 	actionTable[161][IF] = -28;
-	actionTable[161][ELSE] = -28;
+	actionTable[161][ELSE] = 166;
 	actionTable[161][WHILE] = -28;
 	actionTable[161][DO] = -28;
 	actionTable[161][BREAK] = -28;
@@ -2266,7 +2266,7 @@ void parse(){
 									states.pop();
 							}
 							states.push(actionTable[states.top()][vec_rules[r].first]);
-							//semantics(r,tokenSecundario);
+							semantics(r,tokenSecundario);
 					}
 					else{
 							errorRoutines::throwSyntaxError();
