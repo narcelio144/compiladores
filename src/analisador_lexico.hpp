@@ -19,7 +19,6 @@ using std::vector;
 //Definição de algumas variáveis globais úteis
 extern unordered_map<string,int> tokenSecundarioIDMap;
 extern unordered_map<string,t_token> reservedWordMap;
-extern unordered_map<int,string> t_terminalNames;
 extern vector<t_const> vConst;
 extern ifstream inputFile;
 extern int currentLine;
