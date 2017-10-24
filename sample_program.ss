@@ -15,3 +15,7 @@ function fibFat(n:integer) : integer{
 	}
 	return f;
 }
+
+function semParametrosNemVariaveis() : integer{
+	return 1;
+}
